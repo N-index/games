@@ -1,5 +1,5 @@
 <template>
-    <n-carousel trigger="hover" autoplay style="width: 100%; max-width: 500px">
+    <n-carousel trigger="hover" autoplay style="width: 100%; max-width: 500px;border-radius: 20px;overflow: hidden;user-select: ">
       <img class="carousel-img" :src="img.url" :alt="img.alt" v-for="img of imgs" :key="img.alt">
     </n-carousel>
 </template>
@@ -10,7 +10,7 @@ import {NCarousel} from "naive-ui";
 export default {
   name: "Home",
   components:{
-    NCarousel
+    NCarousel,
   },
   data(){
     return {

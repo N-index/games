@@ -1,29 +1,63 @@
 <template>
-  <div id="insert-needle-game" tabindex="3" @keydown.space="shoot" @click="shoot">
+  <n-space>
     <div
-        class="circle"
-        :style="{
-        transform: `rotate(${rotateDeg}deg)`,
-        '--before-rotate': `${-rotateDeg}deg`
-      }"
-        :data-score="score"
-    >
-      <div
-          class="needle"
-          v-for="(needleDeg,index) of needles"
-          :style="needleStyle(needleDeg)"
-          :key="index"
-      ></div>
-    </div>
-    <transition>
-      <div id="shooting-needle" v-show="currentNeedle"></div>
-    </transition>
-    <div v-show="showEnding">游戏结束</div>
-  </div>
+          id="insert-needle-game"
+          tabindex="3"
+          @keydown.space.prevent="shoot"
+          @click="shoot"
+      >
+        <div
+            class="circle"
+            :style="{
+            transform: `rotate(${rotateDeg}deg)`,
+            '--before-rotate': `${-rotateDeg}deg`
+          }"
+            :data-score="score"
+        >
+          <div
+              class="needle"
+              v-for="(needleDeg,index) of needles"
+              :style="needleStyle(needleDeg)"
+              :key="index"
+          ></div>
+        </div>
+        <transition>
+          <div id="shooting-needle" v-show="currentNeedle"></div>
+        </transition>
+      </div>
+    <game-detail-card :title="'见缝插针'">
+      <template v-slot:introduce>
+        又是一款简单而不简略的游戏，游戏画面简略但玩法新颖。玩家手中有一定数量的针头，必须把所有的针头都插进旋转的球里头。不能够重叠也不能够撞到球上的针，赶紧来挑战吧。
+      </template>
+      <template v-slot:playMethod>
+        <n-ul>
+          <n-li>
+            操作方法：
+            <n-tooltip trigger="hover">
+              <template #trigger>
+                <n-icon>
+                  <HandRightOutline/>
+                </n-icon>
+              </template>
+              鼠标
+            </n-tooltip>
+          </n-li>
+        </n-ul>
+      </template>
+    </game-detail-card>
+  </n-space>
 </template>
 
 <script>
+import {NUl,NLi,NSpace,NTooltip,NIcon} from "naive-ui";
+import {HandRightOutline} from '@vicons/ionicons5';
+import GameDetailCard from "../components/GameDetailCard";
 export default {
+  components:{
+    NUl,NLi,NSpace,NTooltip,NIcon,
+    HandRightOutline,
+    GameDetailCard
+  },
   name: "InsertNeedle",
   data() {
     return {
@@ -88,7 +122,13 @@ export default {
 #insert-needle-game{
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  width: 200px;
+  height: 350px;
+  gap:15px;
 }
 #shooting-needle.v-enter-active {
   transition: none;

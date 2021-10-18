@@ -1,19 +1,20 @@
 <template>
-  <n-space justify="center">
+  <n-space>
     <div
+        style="margin-right: auto;"
         class="game"
         tabindex="0"
         ref="game"
-        @keydown.space="pauseGame"
-        @keydown.up="turnUp"
-        @keydown.down="turnDown"
-        @keydown.left="turnLeft"
-        @keydown.right="turnRight"
+        @keydown.space.prevent="pauseGame"
+        @keydown.up.prevent="turnUp"
+        @keydown.down.prevent="turnDown"
+        @keydown.left.prevent="turnLeft"
+        @keydown.right.prevent="turnRight"
     >
-      <n-space style="position: absolute; top: 0; right: 0;" align="center" v-show="time>=1">
-        <n-icon size="20"><TimerOutline /></n-icon>
-        {{ time }}
-      </n-space>
+      <div style="display: flex; align-items: center; gap: 3px;justify-content: center; position: absolute; top: 0; right: 0;"  v-show="time>=1">
+        <n-icon size="18"><TimerOutline /></n-icon>
+        <span>{{ time }}s</span>
+      </div>
       <div class="row" v-for="x of squares.length" :key="x">
         <div
             class="square"
@@ -28,23 +29,13 @@
       </div>
     </div>
     <n-space vertical>
-    <n-card style="width: 300px;" title="贪吃蛇🐍">
-      <n-collapse :default-expanded-names="['2']" accordion>
-        <n-collapse-item title="简介" name="1">
-          <template #header-extra>
-            <n-icon size="20"><InformationCircleOutline /></n-icon>
-          </template>
-          <n-ellipsis expand-trigger="click" line-clamp="2" :tooltip="false">
-            贪吃蛇（Snake）是一个起源於1976年的街机游戏 Blockade。<br>在游戏中，玩家操控一条细长的直线（称为蛇），它会不停前进，玩家只能操控蛇的头部朝向（上下左右），一路吃掉食物，并要避免触碰到自身或者其他障碍物。<br>每次貪食蛇吃掉一件食物，它的身体便增长一些。吃掉一些食物后會使蛇的移動速度逐漸加快，让游戏的难度渐渐变大。
-          </n-ellipsis>
-        </n-collapse-item>
-
-        <n-collapse-item title="玩法" name="2">
-          <template #header-extra>
-            <n-icon size="20"><GameControllerOutline /></n-icon>
-          </template>
-          <ul style="list-style: none;">
-            <li>1. 改变方向:
+      <game-detail-card :title="'贪吃蛇 🐍'">
+        <template v-slot:introduce>
+          贪吃蛇（Snake）是一个起源於1976年的街机游戏 Blockade。<br>在游戏中，玩家操控一条细长的直线（称为蛇），它会不停前进，玩家只能操控蛇的头部朝向（上下左右），一路吃掉食物，并要避免触碰到自身或者其他障碍物。<br>每次貪食蛇吃掉一件食物，它的身体便增长一些。吃掉一些食物后會使蛇的移動速度逐漸加快，让游戏的难度渐渐变大。-->
+        </template>
+        <template v-slot:playMethod>
+          <n-ul>
+            <n-li>改变方向
               <n-grid :cols="3" x-gap="2" style="justify-items: center">
                 <n-grid-item :offset="1">
                   <n-tooltip trigger="hover">
@@ -89,37 +80,26 @@
                   </n-tooltip>
                 </n-grid-item>
               </n-grid>
-            </li>
-            <n-divider dashed></n-divider>
-            <li>2. 黑色是身体</li>
-            <n-divider dashed></n-divider>
-            <li>3. 红色是食物</li>
-          </ul>
-        </n-collapse-item>
-
-      </n-collapse>
-    </n-card>
-    <n-card title="成绩✌">
-
-    </n-card>
+            </n-li>
+            <n-li>暂停：空格键</n-li>
+            <n-li>黑色是蛇的身体</n-li>
+            <n-li>红色是目标食物</n-li>
+          </n-ul>
+        </template>
+      </game-detail-card>
     </n-space>
   </n-space>
-
-
 </template>
 
 <script>
-import {NCard, NCollapseItem, NCollapse, NSpace, NEllipsis, NIcon, NGrid, NGridItem,NTooltip,NDivider} from "naive-ui";
-import {ArrowUpOutline, ArrowDownOutline, ArrowBackOutline, ArrowForwardOutline,InformationCircleOutline,GameControllerOutline,TimerOutline} from '@vicons/ionicons5'
-
+import { NSpace,NIcon, NGrid, NGridItem,NTooltip,NUl,NLi} from "naive-ui";
+import {ArrowUpOutline, ArrowDownOutline, ArrowBackOutline, ArrowForwardOutline,TimerOutline} from '@vicons/ionicons5'
+import GameDetailCard from "../components/GameDetailCard";
 export default {
   name: "HungrySnake",
   components: {
-    NCard,
-    NCollapseItem,
-    NCollapse,
+    GameDetailCard,
     NSpace,
-    NEllipsis,
     NIcon,
     ArrowDownOutline,
     ArrowBackOutline,
@@ -128,10 +108,9 @@ export default {
     NGrid,
     NGridItem,
     NTooltip,
-    InformationCircleOutline,
-    GameControllerOutline,
     TimerOutline,
-    NDivider
+    NUl,
+    NLi
   },
   data() {
     return {

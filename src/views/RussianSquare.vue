@@ -1,76 +1,132 @@
 <template>
-  <div
-      id="russian-square"
-      ref="russian-square"
-      tabindex="1"
-      @keydown.space="transform"
-      @keydown.down="down"
-      @keydown.left="left"
-      @keydown.right="right"
-  >
-    <header class="header">
-      <h1>俄罗斯方块</h1>
-
-        <details>
-          <summary>玩法</summary>
-          <ul>
-            <li>移动：小键盘方向键</li>
-            <li>变换：空格键</li>
-            <li>注意: 使用鼠标点击游戏主体，确保处于 focus 状态</li>
-          </ul>
-        </details>
-
-    </header>
-    <section class="section">
-      <main class="main">
-        <div class="overlay" v-show="isEnd">
-          <h2>游戏结束</h2>
-          <span>您的得分：{{ score }}</span>
-        </div>
-        <div class="row" v-for="(row, rowIndex) of squares" :key="rowIndex">
-          <div
-              class="square"
-              v-for="(number, colIndex) of row"
-              :key="colIndex"
-              :class="{
-              shape: isShapeBody(rowIndex, colIndex),
-              notEmpty: number !== 0
-            }"
-          >
-            <!--           {{ number }} -->
+  <n-space>
+    <div
+        id="russian-square"
+        ref="russian-square"
+        tabindex="1"
+        @keydown.space="transform"
+        @keydown.down="down"
+        @keydown.left="left"
+        @keydown.right="right"
+    >
+      <section class="section">
+        <main class="main">
+          <div class="overlay" v-show="isEnd">
+            <h2>游戏结束</h2>
+            <span>您的得分：{{ score }}</span>
           </div>
-        </div>
-      </main>
-      <aside class="aside">
-        <div class="next-shape">
-          <div
-              class="row"
-              v-for="(row, rowIndex) of nextShape.squares"
-              :key="rowIndex"
-          >
+          <div class="row" v-for="(row, rowIndex) of squares" :key="rowIndex">
             <div
                 class="square"
                 v-for="(number, colIndex) of row"
                 :key="colIndex"
-                :class="{ shape: number === 1 }"
+                :class="{
+                shape: isShapeBody(rowIndex, colIndex),
+                notEmpty: number !== 0
+              }"
             >
-              <!--             {{ number }} -->
+              <!--           {{ number }} -->
             </div>
           </div>
-        </div>
-        <div class="score">分数：{{ score }}</div>
+        </main>
+        <aside class="aside">
+          <div class="next-shape">
+            <div
+                class="row"
+                v-for="(row, rowIndex) of nextShape.squares"
+                :key="rowIndex"
+            >
+              <div
+                  class="square"
+                  v-for="(number, colIndex) of row"
+                  :key="colIndex"
+                  :class="{ shape: number === 1 }"
+              >
+              </div>
+            </div>
+          </div>
+          <div class="score">分数：{{ score }}</div>
 
-        <div class="btn-group">
-          <button @click="startGame">
-            {{ isStart ? "重新开始" : "开始" }}
-          </button>
-        </div>
-      </aside>
-    </section>
-  </div>
+          <div class="btn-group">
+            <n-button type="primary" round @click="startGame">
+              <template #icon v-if="!isStart">
+                <n-icon>
+                  <Navigate/>
+                </n-icon>
+              </template>
+
+              {{ isStart ? "重新开始" : "开始" }}
+            </n-button>
+          </div>
+        </aside>
+      </section>
+    </div>
+
+    <game-detail-card :title="'俄罗斯方块'">
+      <template v-slot:introduce>
+        《俄罗斯方块》（俄语：Тетрис，英语：Tetris），是1980年末期至1990年代初期风靡全世界的电脑游戏，是落下型益智游戏的始祖，为苏联首个在美国发布的娱乐软件。此游戏最初由阿列克谢·帕基特诺夫在苏联设计和编写，于1984年6月6日首次发布，当时他正在苏联科学院电算中心工作。此游戏的名称是由希腊语数字四的前缀“tetra-”（因所有落下方块皆由四块组成）和帕基特诺夫最喜欢的运动网球（“tennis”）拼接而成。
+      </template>
+      <template v-slot:playMethod>
+        <n-ul>
+          <n-li>
+            左右移动:
+                <n-tooltip trigger="hover">
+                  <template #trigger>
+                    <n-icon>
+                      <ArrowBackOutline/>
+                    </n-icon>
+                  </template>
+                  方向左键
+                </n-tooltip>
+               &nbsp;
+                <n-tooltip trigger="hover">
+                  <template #trigger>
+                    <n-icon>
+                      <ArrowForwardOutline/>
+                    </n-icon>
+                  </template>
+                  方向右键
+                </n-tooltip>
+
+          </n-li>
+          <n-li>
+            下落：
+            <n-tooltip trigger="hover">
+              <template #trigger>
+                <n-icon>
+                  <ArrowDownOutline/>
+                </n-icon>
+              </template>
+              方向下键
+            </n-tooltip>
+          </n-li>
+          <n-li>
+              变形：
+              <n-tooltip trigger="hover">
+                <template #trigger>
+                  <n-icon >
+                    <PhoneLandscapeSharp/>
+                  </n-icon>
+                </template>
+                空格键
+              </n-tooltip>
+          </n-li>
+          <n-li>
+            <n-text type="warning">若空间不够，则无法变形</n-text>
+          </n-li>
+          <n-li>
+            <n-text type="warning">使用鼠标点击游戏主体，确保处于 focus 状态</n-text>
+          </n-li>
+        </n-ul>
+      </template>
+    </game-detail-card>
+  </n-space>
 </template>
 
 <script>
+import {NButton,NIcon,NSpace,NTooltip,NUl,NLi,NText} from "naive-ui";
+import GameDetailCard from "../components/GameDetailCard";
+import {Navigate,PhoneLandscapeSharp,ArrowBackOutline,ArrowForwardOutline,ArrowDownOutline}  from '@vicons/ionicons5'
 class Shape {
   constructor() {}
   print() {
@@ -203,6 +259,15 @@ class T extends Shape {
 const shapes = [O, I, Z, ZReverse, L, LReverse, T];
 
 export default {
+  components:{
+    GameDetailCard,
+    NButton,
+    NIcon,
+    NSpace,
+    Navigate,
+    PhoneLandscapeSharp,ArrowBackOutline,ArrowForwardOutline,ArrowDownOutline,
+    NTooltip,NUl,NLi,NText
+  },
   data() {
     return {
       squares: Array.from({ length: 10 }).map(() =>
