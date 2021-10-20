@@ -1,4 +1,7 @@
 <template>
+  <game-rate :game-name="'square'"></game-rate>
+  <n-button type="primary">查看square的 rate 信息</n-button>
+
   <n-space>
     <div
         id="russian-square"
@@ -61,7 +64,6 @@
         </aside>
       </section>
     </div>
-
     <game-detail-card :title="'俄罗斯方块'">
       <template v-slot:introduce>
         《俄罗斯方块》（俄语：Тетрис，英语：Tetris），是1980年末期至1990年代初期风靡全世界的电脑游戏，是落下型益智游戏的始祖，为苏联首个在美国发布的娱乐软件。此游戏最初由阿列克谢·帕基特诺夫在苏联设计和编写，于1984年6月6日首次发布，当时他正在苏联科学院电算中心工作。此游戏的名称是由希腊语数字四的前缀“tetra-”（因所有落下方块皆由四块组成）和帕基特诺夫最喜欢的运动网球（“tennis”）拼接而成。
@@ -70,23 +72,23 @@
         <n-ul>
           <n-li>
             左右移动:
-                <n-tooltip trigger="hover">
-                  <template #trigger>
-                    <n-icon>
-                      <ArrowBackOutline/>
-                    </n-icon>
-                  </template>
-                  方向左键
-                </n-tooltip>
-               &nbsp;
-                <n-tooltip trigger="hover">
-                  <template #trigger>
-                    <n-icon>
-                      <ArrowForwardOutline/>
-                    </n-icon>
-                  </template>
-                  方向右键
-                </n-tooltip>
+            <n-tooltip trigger="hover">
+              <template #trigger>
+                <n-icon>
+                  <ArrowBackOutline/>
+                </n-icon>
+              </template>
+              方向左键
+            </n-tooltip>
+            &nbsp;
+            <n-tooltip trigger="hover">
+              <template #trigger>
+                <n-icon>
+                  <ArrowForwardOutline/>
+                </n-icon>
+              </template>
+              方向右键
+            </n-tooltip>
 
           </n-li>
           <n-li>
@@ -101,15 +103,15 @@
             </n-tooltip>
           </n-li>
           <n-li>
-              变形：
-              <n-tooltip trigger="hover">
-                <template #trigger>
-                  <n-icon >
-                    <PhoneLandscapeSharp/>
-                  </n-icon>
-                </template>
-                空格键
-              </n-tooltip>
+            变形：
+            <n-tooltip trigger="hover">
+              <template #trigger>
+                <n-icon>
+                  <PhoneLandscapeSharp/>
+                </n-icon>
+              </template>
+              空格键
+            </n-tooltip>
           </n-li>
           <n-li>
             <n-text type="warning">若空间不够，则无法变形</n-text>
@@ -124,154 +126,27 @@
 </template>
 
 <script>
-import {NButton,NIcon,NSpace,NTooltip,NUl,NLi,NText} from "naive-ui";
+import GameRate from "../components/GameRate";
+import {NButton, NIcon, NSpace, NTooltip, NUl, NLi, NText} from "naive-ui";
 import GameDetailCard from "../components/GameDetailCard";
-import {Navigate,PhoneLandscapeSharp,ArrowBackOutline,ArrowForwardOutline,ArrowDownOutline}  from '@vicons/ionicons5'
-class Shape {
-  constructor() {}
-  print() {
-    for (let i = 0; i < this.squares.length; i++) {
-      let str = "";
-      for (let j = 0; j < this.squares[0].length; j++) {
-        str += this.squares[i][j];
-      }
-      console.log(str);
-    }
-    console.log("\n");
-  }
-  transform() {
-    const result = [
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-
-    for (let i = 0; i < this.squares.length; i++) {
-      for (let j = 0; j < this.squares[0].length; j++) {
-        if (this.squares[i][j] === 1) {
-          const [offsetX, offsetY] = [this.origin[0] - i, this.origin[1] - j];
-          result[this.origin[0] - offsetY][this.origin[1] + offsetX] = 1;
-        }
-      }
-    }
-    this.squares = result;
-  }
-}
-class O extends Shape {
-  constructor() {
-    super();
-    this.name = "正方形";
-    this.limit = 0;
-    this.squares = [
-      [1, 1, 0, 0],
-      [1, 1, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    this.origin = [1, 1];
-  }
-}
-class I extends Shape {
-  constructor() {
-    super();
-    this.name = "一长条";
-    this.limit = 2;
-    this.squares = [
-      [0, 0, 0, 0],
-      [1, 1, 1, 1],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    this.origin = [1, 1];
-  }
-}
-class Z extends Shape {
-  constructor() {
-    super();
-    this.name = "Z形";
-    this.limit = 4;
-    this.squares = [
-      [1, 1, 0, 0],
-      [0, 1, 1, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    this.origin = [1, 1];
-  }
-}
-class ZReverse extends Shape {
-  constructor() {
-    super();
-    this.name = "反向Z";
-    this.limit = 4;
-    this.squares = [
-      [0, 1, 1, 0],
-      [1, 1, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    this.origin = [1, 1];
-  }
-}
-class L extends Shape {
-  constructor() {
-    super();
-    this.name = "L形状";
-    this.limit = 4;
-    this.squares = [
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-      [0, 1, 1, 0],
-      [0, 0, 0, 0]
-    ];
-    this.origin = [1, 1];
-  }
-}
-class LReverse extends Shape {
-  constructor() {
-    super();
-    this.name = "反向L";
-    this.limit = 4;
-    this.squares = [
-      [0, 1, 0, 0],
-      [0, 1, 0, 0],
-      [1, 1, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    this.origin = [1, 1];
-  }
-}
-class T extends Shape {
-  constructor() {
-    super();
-    this.name = "T形状";
-    this.limit = 4;
-    this.squares = [
-      [0, 1, 0, 0],
-      [1, 1, 1, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-    ];
-    this.origin = [1, 1];
-  }
-}
-const shapes = [O, I, Z, ZReverse, L, LReverse, T];
+import {Navigate, PhoneLandscapeSharp, ArrowBackOutline, ArrowForwardOutline, ArrowDownOutline} from '@vicons/ionicons5'
+import {shapes} from "../utils/squareShapes";
 
 export default {
-  components:{
+  components: {
+    GameRate,
     GameDetailCard,
     NButton,
     NIcon,
     NSpace,
     Navigate,
-    PhoneLandscapeSharp,ArrowBackOutline,ArrowForwardOutline,ArrowDownOutline,
-    NTooltip,NUl,NLi,NText
+    PhoneLandscapeSharp, ArrowBackOutline, ArrowForwardOutline, ArrowDownOutline,
+    NTooltip, NUl, NLi, NText
   },
   data() {
     return {
-      squares: Array.from({ length: 10 }).map(() =>
-          Array.from({ length: 10 }).fill(0)
+      squares: Array.from({length: 10}).map(() =>
+          Array.from({length: 10}).fill(0)
       ),
       baseX: 10,
       baseY: 0,
@@ -300,8 +175,8 @@ export default {
     },
     reset() {
       clearTimeout(this.timer);
-      this.squares = Array.from({ length: this.length }).map(() =>
-          Array.from({ length: this.length }).fill(0)
+      this.squares = Array.from({ length: this.length}).map(() =>
+          Array.from({length: this.length}).fill(0)
       );
       this.isStart = false;
       this.score = 0;
@@ -393,7 +268,7 @@ export default {
       if (restRows.length === this.squares.length) return;
       const emptyRow = Array.from({
         length: this.squares.length - restRows.length
-      }).map(() => Array.from({ length: this.length }).fill(0));
+      }).map(() => Array.from({length: this.length}).fill(0));
 
       this.squares = [...emptyRow, ...restRows];
     },
@@ -431,55 +306,67 @@ export default {
   justify-content: center;
   align-items: center;
 }
-header.header h1{
+
+header.header h1 {
   font-size: 20px;
   margin-bottom: 8px;
   text-align: center;
 }
-header.header ul{
+
+header.header ul {
   list-style: none;
   font-size: 14px;
 }
+
 section.section {
   display: flex;
   gap: 15px;
 }
+
 aside.aside {
   display: flex;
   flex-direction: column;
 }
-aside.aside .shape{
+
+aside.aside .shape {
   background-color: #00dbde;
 }
+
 .next-shape {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
-.next-shape .row{
+
+.next-shape .row {
   display: flex;
   gap: 5px;
 }
-.next-shape .square{
+
+.next-shape .square {
   width: 20px;
   height: 20px;
   background-color: #eee;
 }
+
 .score {
   text-align: center;
   font-size: 18px;
 }
+
 .btn-group {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
-.btn-group button{
+
+.btn-group button {
   padding: 10px 2px;
   font-size: 16px;
   border-radius: 8px;
   cursor: pointer;
 }
+
 main.main {
   align-self: center;
   position: relative;
@@ -487,22 +374,27 @@ main.main {
   flex-direction: column;
   gap: 5px;
 }
-main.main .row{
+
+main.main .row {
   display: flex;
   gap: 5px;
 }
-main.main .square{
+
+main.main .square {
   width: 20px;
   height: 20px;
   background-color: #c6bfbf;
 }
-main.main .notEmpty{
+
+main.main .notEmpty {
   background-color: #517f80;
 
 }
+
 main.main .shape {
-    background-color: #c95840;
-  }
+  background-color: #c95840;
+}
+
 .overlay {
   position: absolute;
   width: 100%;
@@ -516,10 +408,12 @@ main.main .shape {
   backdrop-filter: blur(3px) sepia(0.1);
 
 }
-.overlay h2{
+
+.overlay h2 {
   font-size: 25px;
 }
-.overlay span{
+
+.overlay span {
   font-size: 22px;
 }
 </style>

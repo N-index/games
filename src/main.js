@@ -5,5 +5,10 @@ import 'vfonts/Lato.css'
 import 'vfonts/FiraCode.css'
 import router from "./routers";
 
+
+
+const b ='12345' ;
+console.log(b);
+
 createApp(App).use(router)
     .mount('#app')

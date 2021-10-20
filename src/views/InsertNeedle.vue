@@ -1,5 +1,8 @@
 <template>
   <n-space>
+    <game-rate :game-name="'needle'"></game-rate>
+    <n-button type="primary">查看needle的 rate 信息</n-button>
+
     <div
           id="insert-needle-game"
           tabindex="3"
@@ -52,8 +55,10 @@
 import {NUl,NLi,NSpace,NTooltip,NIcon} from "naive-ui";
 import {HandRightOutline} from '@vicons/ionicons5';
 import GameDetailCard from "../components/GameDetailCard";
+import GameRate from "../components/GameRate";
 export default {
   components:{
+    GameRate,
     NUl,NLi,NSpace,NTooltip,NIcon,
     HandRightOutline,
     GameDetailCard
