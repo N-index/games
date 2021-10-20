@@ -4,13 +4,13 @@
 
   <n-space>
     <div
-        id="russian-square"
-        ref="russian-square"
-        tabindex="1"
-        @keydown.space="transform"
-        @keydown.down="down"
-        @keydown.left="left"
-        @keydown.right="right"
+      id="russian-square"
+      ref="russian-square"
+      tabindex="1"
+      @keydown.space="transform"
+      @keydown.down="down"
+      @keydown.left="left"
+      @keydown.right="right"
     >
       <section class="section">
         <main class="main">
@@ -20,12 +20,12 @@
           </div>
           <div class="row" v-for="(row, rowIndex) of squares" :key="rowIndex">
             <div
-                class="square"
-                v-for="(number, colIndex) of row"
-                :key="colIndex"
-                :class="{
+              class="square"
+              v-for="(number, colIndex) of row"
+              :key="colIndex"
+              :class="{
                 shape: isShapeBody(rowIndex, colIndex),
-                notEmpty: number !== 0
+                notEmpty: number !== 0,
               }"
             >
               <!--           {{ number }} -->
@@ -35,17 +35,16 @@
         <aside class="aside">
           <div class="next-shape">
             <div
-                class="row"
-                v-for="(row, rowIndex) of nextShape.squares"
-                :key="rowIndex"
+              class="row"
+              v-for="(row, rowIndex) of nextShape.squares"
+              :key="rowIndex"
             >
               <div
-                  class="square"
-                  v-for="(number, colIndex) of row"
-                  :key="colIndex"
-                  :class="{ shape: number === 1 }"
-              >
-              </div>
+                class="square"
+                v-for="(number, colIndex) of row"
+                :key="colIndex"
+                :class="{ shape: number === 1 }"
+              ></div>
             </div>
           </div>
           <div class="score">分数：{{ score }}</div>
@@ -54,7 +53,7 @@
             <n-button type="primary" round @click="startGame">
               <template #icon v-if="!isStart">
                 <n-icon>
-                  <Navigate/>
+                  <Navigate />
                 </n-icon>
               </template>
 
@@ -75,7 +74,7 @@
             <n-tooltip trigger="hover">
               <template #trigger>
                 <n-icon>
-                  <ArrowBackOutline/>
+                  <ArrowBackOutline />
                 </n-icon>
               </template>
               方向左键
@@ -84,19 +83,18 @@
             <n-tooltip trigger="hover">
               <template #trigger>
                 <n-icon>
-                  <ArrowForwardOutline/>
+                  <ArrowForwardOutline />
                 </n-icon>
               </template>
               方向右键
             </n-tooltip>
-
           </n-li>
           <n-li>
             下落：
             <n-tooltip trigger="hover">
               <template #trigger>
                 <n-icon>
-                  <ArrowDownOutline/>
+                  <ArrowDownOutline />
                 </n-icon>
               </template>
               方向下键
@@ -107,7 +105,7 @@
             <n-tooltip trigger="hover">
               <template #trigger>
                 <n-icon>
-                  <PhoneLandscapeSharp/>
+                  <PhoneLandscapeSharp />
                 </n-icon>
               </template>
               空格键
@@ -117,7 +115,9 @@
             <n-text type="warning">若空间不够，则无法变形</n-text>
           </n-li>
           <n-li>
-            <n-text type="warning">使用鼠标点击游戏主体，确保处于 focus 状态</n-text>
+            <n-text type="warning"
+              >使用鼠标点击游戏主体，确保处于 focus 状态</n-text
+            >
           </n-li>
         </n-ul>
       </template>
@@ -127,10 +127,16 @@
 
 <script>
 import GameRate from "../components/GameRate";
-import {NButton, NIcon, NSpace, NTooltip, NUl, NLi, NText} from "naive-ui";
+import { NButton, NIcon, NSpace, NTooltip, NUl, NLi, NText } from "naive-ui";
 import GameDetailCard from "../components/GameDetailCard";
-import {Navigate, PhoneLandscapeSharp, ArrowBackOutline, ArrowForwardOutline, ArrowDownOutline} from '@vicons/ionicons5'
-import {shapes} from "../utils/squareShapes";
+import {
+  Navigate,
+  PhoneLandscapeSharp,
+  ArrowBackOutline,
+  ArrowForwardOutline,
+  ArrowDownOutline,
+} from "@vicons/ionicons5";
+import { shapes } from "../utils/squareShapes";
 
 export default {
   components: {
@@ -140,13 +146,19 @@ export default {
     NIcon,
     NSpace,
     Navigate,
-    PhoneLandscapeSharp, ArrowBackOutline, ArrowForwardOutline, ArrowDownOutline,
-    NTooltip, NUl, NLi, NText
+    PhoneLandscapeSharp,
+    ArrowBackOutline,
+    ArrowForwardOutline,
+    ArrowDownOutline,
+    NTooltip,
+    NUl,
+    NLi,
+    NText,
   },
   data() {
     return {
-      squares: Array.from({length: 10}).map(() =>
-          Array.from({length: 10}).fill(0)
+      squares: Array.from({ length: 10 }).map(() =>
+        Array.from({ length: 10 }).fill(0)
       ),
       baseX: 10,
       baseY: 0,
@@ -156,14 +168,14 @@ export default {
           [0, 0, 0, 0],
           [0, 0, 0, 0],
           [0, 0, 0, 0],
-          [0, 0, 0, 0]
-        ]
+          [0, 0, 0, 0],
+        ],
       },
       shapePos: [[]],
       origin: [1, 1],
       timer: null,
       isStart: false,
-      isEnd: false
+      isEnd: false,
     };
   },
   created() {
@@ -175,8 +187,8 @@ export default {
     },
     reset() {
       clearTimeout(this.timer);
-      this.squares = Array.from({ length: this.length}).map(() =>
-          Array.from({length: this.length}).fill(0)
+      this.squares = Array.from({ length: this.length }).map(() =>
+        Array.from({ length: this.length }).fill(0)
       );
       this.isStart = false;
       this.score = 0;
@@ -225,23 +237,23 @@ export default {
       for (const [posX, posY] of this.shapePos) {
         const [offsetX, offsetY] = [
           this.origin[0] - posX,
-          this.origin[1] - posY
+          this.origin[1] - posY,
         ];
         after.push([this.origin[0] - offsetY, this.origin[1] + offsetX]);
       }
       // 不能变换的情况
       const isConflict = ([x, y]) =>
-          this.squares[x][y] === 1 ||
-          x < 0 ||
-          x > this.length - 1 ||
-          y < 0 ||
-          y > this.length - 1;
+        this.squares[x][y] === 1 ||
+        x < 0 ||
+        x > this.length - 1 ||
+        y < 0 ||
+        y > this.length - 1;
       if (after.some(isConflict)) return;
       this.shapePos = after;
     },
     left() {
       if (
-          this.shapePos.some(([x, y]) => y <= 0 || this.squares[x][y - 1] === 1)
+        this.shapePos.some(([x, y]) => y <= 0 || this.squares[x][y - 1] === 1)
       )
         return;
       this.shapePos = this.shapePos.map(([x, y]) => [x, y - 1]);
@@ -249,9 +261,9 @@ export default {
     },
     right() {
       if (
-          this.shapePos.some(
-              ([x, y]) => y >= this.length - 1 || this.squares[x][y + 1] === 1
-          )
+        this.shapePos.some(
+          ([x, y]) => y >= this.length - 1 || this.squares[x][y + 1] === 1
+        )
       )
         return;
       this.shapePos = this.shapePos.map(([x, y]) => [x, y + 1]);
@@ -259,16 +271,16 @@ export default {
     },
     resolve() {
       const resolveRows = this.squares.filter((row) =>
-          row.every((number) => number === 1)
+        row.every((number) => number === 1)
       );
       this.score += resolveRows.length;
       const restRows = this.squares.filter((row) =>
-          row.some((number) => number !== 1)
+        row.some((number) => number !== 1)
       );
       if (restRows.length === this.squares.length) return;
       const emptyRow = Array.from({
-        length: this.squares.length - restRows.length
-      }).map(() => Array.from({length: this.length}).fill(0));
+        length: this.squares.length - restRows.length,
+      }).map(() => Array.from({ length: this.length }).fill(0));
 
       this.squares = [...emptyRow, ...restRows];
     },
@@ -290,10 +302,10 @@ export default {
     },
     checkMeet() {
       return this.shapePos.some(
-          ([x, y]) => x >= this.length - 1 || this.squares[x + 1][y] === 1
+        ([x, y]) => x >= this.length - 1 || this.squares[x + 1][y] === 1
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -388,7 +400,6 @@ main.main .square {
 
 main.main .notEmpty {
   background-color: #517f80;
-
 }
 
 main.main .shape {
@@ -406,7 +417,6 @@ main.main .shape {
   background-color: rgba(215, 215, 215, 0.71);
   color: #4f4f4f;
   backdrop-filter: blur(3px) sepia(0.1);
-
 }
 
 .overlay h2 {
@@ -417,5 +427,3 @@ main.main .shape {
   font-size: 22px;
 }
 </style>
-
-

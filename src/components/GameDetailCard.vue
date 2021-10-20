@@ -1,5 +1,5 @@
 <template>
-  <n-card style="width: 300px;" :title="title">
+  <n-card style="width: 300px" :title="title">
     <n-collapse :default-expanded-names="['2']" accordion>
       <n-collapse-item title="简介" name="1">
         <template #header-extra>
@@ -16,38 +16,38 @@
         </template>
         <slot name="playMethod">用手玩</slot>
       </n-collapse-item>
-
     </n-collapse>
   </n-card>
-
 </template>
 
 <script>
-import {NCard, NCollapseItem, NCollapse, NEllipsis, NIcon,
-} from "naive-ui";
+import { NCard, NCollapseItem, NCollapse, NEllipsis, NIcon } from "naive-ui";
 import {
-  InformationCircleOutline,GameControllerOutline,
-}
-  from '@vicons/ionicons5'
+  InformationCircleOutline,
+  GameControllerOutline,
+} from "@vicons/ionicons5";
 
 export default {
-  props:{
-    title:{
+  props: {
+    title: {
       type: String,
-      default:'游戏名字'
-    }
+      default: "游戏名字",
+    },
   },
-  components:{
-    NCard, NCollapseItem, NCollapse, NEllipsis, NIcon,
-//     NGrid, NGridItem,NTooltip,NDivider,NUl,NLi,
-// ArrowUpOutline, ArrowDownOutline, ArrowBackOutline, ArrowForwardOutline,
-    InformationCircleOutline,GameControllerOutline
+  components: {
+    NCard,
+    NCollapseItem,
+    NCollapse,
+    NEllipsis,
+    NIcon,
+    //     NGrid, NGridItem,NTooltip,NDivider,NUl,NLi,
+    // ArrowUpOutline, ArrowDownOutline, ArrowBackOutline, ArrowForwardOutline,
+    InformationCircleOutline,
+    GameControllerOutline,
     // ,TimerOutline
-},
-  name: "GameDetail.vue"
-}
+  },
+  name: "GameDetail.vue",
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -4,23 +4,29 @@
       <n-layout-header bordered position="static">
         <app-header></app-header>
       </n-layout-header>
-      <n-layout has-sider position="absolute" style="top: calc(5px + var(--header-height)) ">
+      <n-layout
+        has-sider
+        position="absolute"
+        style="top: calc(5px + var(--header-height))"
+      >
         <n-layout-sider
-            bordered
-            show-trigger
-            collapse-mode="width"
-            :collapsed-width="64"
-            :width="240"
-            :native-scrollbar="false"
+          bordered
+          show-trigger
+          collapse-mode="width"
+          :collapsed-width="64"
+          :width="240"
+          :native-scrollbar="false"
         >
           <app-menu></app-menu>
         </n-layout-sider>
-  <!--      BalloonOutline-->
+        <!--      BalloonOutline-->
         <n-layout position="static" style="" :native-scrollbar="false">
-          <n-space style="width: 100%;min-height: calc(100vh - var(--header-height))" >
+          <n-space
+            style="width: 100%; min-height: calc(100vh - var(--header-height))"
+          >
             <n-loading-bar-provider>
               <n-message-provider>
-                <router-view ></router-view>
+                <router-view></router-view>
               </n-message-provider>
             </n-loading-bar-provider>
           </n-space>
@@ -31,38 +37,51 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue";
 import AppHeader from "./components/AppHeader";
-import  AppMenu from './components/AppMenu';
-import {NLayout,NLayoutHeader,NLayoutSider,NSpace, NMessageProvider,NLoadingBarProvider } from "naive-ui";
-import { NConfigProvider } from 'naive-ui'
-import { zhCN, dateZhCN } from 'naive-ui'
+import AppMenu from "./components/AppMenu";
+import {
+  NLayout,
+  NLayoutHeader,
+  NLayoutSider,
+  NSpace,
+  NMessageProvider,
+  NLoadingBarProvider,
+} from "naive-ui";
+import { NConfigProvider } from "naive-ui";
+import { zhCN, dateZhCN } from "naive-ui";
 
 export default defineComponent({
-  name: 'App',
-  data(){
+  name: "App",
+  data() {
     return {
-      zhCN, dateZhCN
-    }
+      zhCN,
+      dateZhCN,
+    };
   },
   components: {
-    NConfigProvider,NMessageProvider,NLoadingBarProvider,
+    NConfigProvider,
+    NMessageProvider,
+    NLoadingBarProvider,
     AppHeader,
     AppMenu,
-    NLayout,NLayoutHeader,NLayoutSider,NSpace,
-  }
-})
+    NLayout,
+    NLayoutHeader,
+    NLayoutSider,
+    NSpace,
+  },
+});
 </script>
 
 <style>
 *,
 *::before,
-*::after{
+*::after {
   margin: 0;
-  padding:0;
+  padding: 0;
   box-sizing: inherit;
 }
-:root{
+:root {
   font-size: 62.5%;
   box-sizing: border-box;
   min-height: 100vh;
