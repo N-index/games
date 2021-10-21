@@ -1,6 +1,6 @@
 <template>
   <n-space vertical>
-    <game-rate :gameKey="gameKey"></game-rate>
+    <game-rate :gameKey="gameKey" :gameName="gameName"></game-rate>
     <n-space>
       <div
         style="margin-right: auto"
@@ -44,7 +44,7 @@
       <n-space vertical>
         <game-detail-card :title="gameName" @toggleDrawer="toggleDrawer">
           <template v-slot:introduce>
-            贪吃蛇（Snake）是一个起源於1976年的街机游戏 Blockade。<br />在游戏中，玩家操控一条细长的直线（称为蛇），它会不停前进，玩家只能操控蛇的头部朝向（上下左右），一路吃掉食物，并要避免触碰到自身或者其他障碍物。<br />每次貪食蛇吃掉一件食物，它的身体便增长一些。吃掉一些食物后會使蛇的移動速度逐漸加快，让游戏的难度渐渐变大。-->
+            贪吃蛇（Snake）是一个起源於1976年的街机游戏 Blockade。<br />在游戏中，玩家操控一条细长的直线（称为蛇），它会不停前进，玩家只能操控蛇的头部朝向（上下左右），一路吃掉食物，并要避免触碰到自身或者其他障碍物。<br />每次貪食蛇吃掉一件食物，它的身体便增长一些。吃掉一些食物后會使蛇的移動速度逐漸加快，让游戏的难度渐渐变大。
           </template>
           <template v-slot:playMethod>
             <n-ul>

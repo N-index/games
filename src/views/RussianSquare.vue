@@ -1,5 +1,5 @@
 <template>
-  <game-rate :gameKey="gameKey"></game-rate>
+  <game-rate :gameKey="gameKey" :gameName="gameName"></game-rate>
   <n-space>
     <div
       id="russian-square"
@@ -438,12 +438,12 @@ main.main {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 2px;
 }
 
 main.main .row {
   display: flex;
-  gap: 5px;
+  gap: 2px;
 }
 
 main.main .square {

@@ -1,6 +1,6 @@
 <template>
   <n-space vertical>
-    <game-rate :gameKey="'needle'"></game-rate>
+    <game-rate :gameKey="gameKey" :gameName="gameName"></game-rate>
     <n-space>
       <div
         id="insert-needle-game"
