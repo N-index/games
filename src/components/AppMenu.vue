@@ -4,7 +4,8 @@
     :collapsed-width="64"
     :collapsed-icon-size="22"
     mode="vertical"
-    v-model:value="activeKey"
+    @update:value="jumpRoute"
+    :value="activeKey"
     :options="menuOptions"
   />
 </template>
@@ -18,64 +19,27 @@ import {
 } from "@vicons/ionicons5";
 import { NIcon, NMenu } from "naive-ui";
 import { h } from "vue";
-import { RouterLink } from "vue-router";
 function renderIcon(icon) {
   return () => h(NIcon, null, { default: () => h(icon) });
 }
 const menuOptions = [
   {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: {
-            path: "/",
-          },
-        },
-        "首页"
-      ),
+    label: "首页",
     key: "home",
     icon: renderIcon(HomeOutline),
   },
   {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: {
-            path: "/hungry-snake",
-          },
-        },
-        "贪吃蛇"
-      ),
+    label: "贪吃蛇",
     key: "hungry-snake",
     icon: renderIcon(AnalyticsOutline),
   },
   {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: {
-            path: "/russian-square",
-          },
-        },
-        "俄罗斯方块"
-      ),
+    label: "俄罗斯方块",
     key: "russian-square",
     icon: renderIcon(AppsOutline),
   },
   {
-    label: () =>
-      h(
-        RouterLink,
-        {
-          to: {
-            path: "/insert-needle",
-          },
-        },
-        "见缝插针"
-      ),
+    label: "见缝插针",
     key: "insert-needle",
     icon: renderIcon(SpeedometerOutline),
   },
@@ -89,6 +53,14 @@ export default {
       activeKey: "home",
       menuOptions: menuOptions,
     };
+  },
+  methods: {
+    async jumpRoute(key) {
+      const navigationResult = await this.$router.push("/" + key);
+      if (!navigationResult) {
+        this.activeKey = key;
+      }
+    },
   },
 };
 </script>

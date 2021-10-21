@@ -108,7 +108,16 @@
 </template>
 
 <script>
-import { NSpace, NIcon, NGrid, NGridItem, NTooltip, NUl, NLi } from "naive-ui";
+import {
+  NSpace,
+  NIcon,
+  NGrid,
+  NGridItem,
+  NTooltip,
+  NUl,
+  NLi,
+  useDialog,
+} from "naive-ui";
 import {
   ArrowUpOutline,
   ArrowDownOutline,
@@ -122,6 +131,31 @@ import GameRate from "../components/GameRate";
 
 export default {
   name: "HungrySnake",
+  setup() {
+    const dialog = useDialog();
+    return {
+      dialog,
+    };
+  },
+  async beforeRouteLeave() {
+    if (this.isStart) {
+      return await new Promise((resolve) => {
+        this.dialog.warning({
+          title: "是否离开",
+          content: "贪吃蛇正在运行，离开将不会保存数据",
+          maskClosable: false,
+          positiveText: "离开",
+          negativeText: "留下",
+          onPositiveClick: () => {
+            resolve(true);
+          },
+          onNegativeClick: () => {
+            resolve(false);
+          },
+        });
+      });
+    }
+  },
   components: {
     GameRate,
     GameDetailCard,

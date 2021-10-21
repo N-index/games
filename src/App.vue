@@ -24,11 +24,13 @@
           <n-space
             style="width: 100%; min-height: calc(100vh - var(--header-height))"
           >
-            <n-loading-bar-provider>
-              <n-message-provider>
-                <router-view></router-view>
-              </n-message-provider>
-            </n-loading-bar-provider>
+            <n-dialog-provider>
+              <n-loading-bar-provider>
+                <n-message-provider>
+                  <router-view></router-view>
+                </n-message-provider>
+              </n-loading-bar-provider>
+            </n-dialog-provider>
           </n-space>
         </n-layout>
       </n-layout>
@@ -41,6 +43,7 @@ import { defineComponent } from "vue";
 import AppHeader from "./components/AppHeader";
 import AppMenu from "./components/AppMenu";
 import {
+  NDialogProvider,
   NLayout,
   NLayoutHeader,
   NLayoutSider,
@@ -60,6 +63,7 @@ export default defineComponent({
     };
   },
   components: {
+    NDialogProvider,
     NConfigProvider,
     NMessageProvider,
     NLoadingBarProvider,

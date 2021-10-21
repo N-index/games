@@ -127,7 +127,16 @@
 
 <script>
 import GameRate from "../components/GameRate";
-import { NButton, NIcon, NSpace, NTooltip, NUl, NLi, NText } from "naive-ui";
+import {
+  NButton,
+  NIcon,
+  NSpace,
+  NTooltip,
+  NUl,
+  NLi,
+  NText,
+  useDialog,
+} from "naive-ui";
 import GameDetailCard from "../components/GameDetailCard";
 import {
   Navigate,
@@ -139,6 +148,31 @@ import {
 import { shapes } from "../utils/squareShapes";
 
 export default {
+  setup() {
+    const dialog = useDialog();
+    return {
+      dialog,
+    };
+  },
+  async beforeRouteLeave() {
+    if (!this.isStart) return true;
+
+    return await new Promise((resolve) => {
+      this.dialog.warning({
+        title: "是否离开",
+        content: "俄罗斯方块正在运行，是否离开？",
+        maskClosable: false,
+        positiveText: "离开",
+        negativeText: "留下",
+        onPositiveClick: () => {
+          resolve(true);
+        },
+        onNegativeClick: () => {
+          resolve(false);
+        },
+      });
+    });
+  },
   components: {
     GameRate,
     GameDetailCard,

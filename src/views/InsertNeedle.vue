@@ -52,11 +52,18 @@
 </template>
 
 <script>
-import { NUl, NLi, NSpace, NTooltip, NIcon } from "naive-ui";
+import { NIcon, NLi, NSpace, NTooltip, NUl, useDialog } from "naive-ui";
 import { HandRightOutline } from "@vicons/ionicons5";
 import GameDetailCard from "../components/GameDetailCard";
 import GameRate from "../components/GameRate";
+
 export default {
+  setup() {
+    const dialog = useDialog();
+    return {
+      dialog,
+    };
+  },
   components: {
     GameRate,
     NUl,
@@ -66,6 +73,25 @@ export default {
     NIcon,
     HandRightOutline,
     GameDetailCard,
+  },
+  async beforeRouteLeave() {
+    if (this.start) {
+      return await new Promise((resolve) => {
+        this.dialog.warning({
+          title: "是否离开",
+          content: "见缝插针正在运行，离开将不会保存数据",
+          maskClosable: false,
+          positiveText: "离开",
+          negativeText: "留下",
+          onPositiveClick: () => {
+            resolve(true);
+          },
+          onNegativeClick: () => {
+            resolve(false);
+          },
+        });
+      });
+    }
   },
   name: "InsertNeedle",
   data() {
