@@ -3,27 +3,19 @@ import { createWebHashHistory, createRouter } from "vue-router";
 const routes = [
   {
     path: "/home",
-    component: () => {
-      import("../views/Home");
-    },
+    component: () => import("../views/Home"),
   },
   {
     path: "/hungry-snake",
-    component: () => {
-      import("../views/HungrySnake");
-    },
+    component: () => import("../views/HungrySnake"),
   },
   {
     path: "/insert-needle",
-    component: () => {
-      import("../views/InsertNeedle");
-    },
+    component: () => import("../views/InsertNeedle"),
   },
   {
     path: "/russian-square",
-    component: () => {
-      import("../views/RussianSquare");
-    },
+    component: () => import("../views/RussianSquare"),
   },
 ];
 const router = createRouter({
