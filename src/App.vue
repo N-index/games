@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :locale="zhCN" :date-locale="dateZhCN">
+  <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme="theme">
     <n-layout position="absolute">
       <n-layout-header bordered position="static">
         <app-header></app-header>
@@ -18,6 +18,22 @@
           :native-scrollbar="false"
         >
           <app-menu></app-menu>
+          <n-divider />
+          <n-space justify="center" align="center">
+            主题
+            <n-switch v-model:value="isDarkTheme">
+              <template #checked>
+                <n-icon>
+                  <Moon />
+                </n-icon>
+              </template>
+              <template #unchecked>
+                <n-icon>
+                  <Sunny />
+                </n-icon>
+              </template>
+            </n-switch>
+          </n-space>
         </n-layout-sider>
         <!--      BalloonOutline-->
         <n-layout position="static" style="" :native-scrollbar="false">
@@ -43,23 +59,28 @@ import { defineComponent } from "vue";
 import AppHeader from "./components/AppHeader";
 import AppMenu from "./components/AppMenu";
 import {
+  NIcon,
+  NSwitch,
   NDialogProvider,
   NLayout,
   NLayoutHeader,
   NLayoutSider,
   NSpace,
+  NDivider,
   NMessageProvider,
   NLoadingBarProvider,
+  darkTheme,
 } from "naive-ui";
 import { NConfigProvider } from "naive-ui";
 import { zhCN, dateZhCN } from "naive-ui";
-
+import { Sunny, Moon } from "@vicons/ionicons5";
 export default defineComponent({
   name: "App",
   data() {
     return {
       zhCN,
       dateZhCN,
+      isDarkTheme: JSON.parse(localStorage.getItem("isDarkTheme")),
     };
   },
   components: {
@@ -73,6 +94,17 @@ export default defineComponent({
     NLayoutHeader,
     NLayoutSider,
     NSpace,
+    NSwitch,
+    NDivider,
+    Sunny,
+    Moon,
+    NIcon,
+  },
+  computed: {
+    theme() {
+      localStorage.setItem("isDarkTheme", JSON.stringify(this.isDarkTheme));
+      return this.isDarkTheme ? darkTheme : null;
+    },
   },
 });
 </script>

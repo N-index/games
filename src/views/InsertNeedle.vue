@@ -1,5 +1,5 @@
 <template>
-  <n-space>
+  <n-space vertical>
     <game-rate :gameKey="'needle'"></game-rate>
     <n-space>
       <div
@@ -85,6 +85,7 @@ export default {
       toggleDrawer,
     };
   },
+
   components: {
     GameRankDrawer,
     GameDetailCard,
