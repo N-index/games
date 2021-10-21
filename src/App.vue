@@ -39,6 +39,8 @@
         <n-layout position="static" style="" :native-scrollbar="false">
           <n-space
             style="width: 100%; min-height: calc(100vh - var(--header-height))"
+            justify="center"
+            align="center"
           >
             <n-dialog-provider>
               <n-loading-bar-provider>
@@ -118,7 +120,6 @@ export default defineComponent({
   box-sizing: inherit;
 }
 :root {
-  /*font-size: 62.5%;*/
   box-sizing: border-box;
   min-height: 100vh;
   --header-height: 80px;

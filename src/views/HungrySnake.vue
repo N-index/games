@@ -159,7 +159,7 @@ export default {
       return await new Promise((resolve) => {
         this.dialog.warning({
           title: "是否离开",
-          content: "贪吃蛇正在运行，离开将不会保存数据",
+          content: `"${this.gameName}" 正在运行，是否离开？`,
           maskClosable: false,
           positiveText: "离开",
           negativeText: "留下",

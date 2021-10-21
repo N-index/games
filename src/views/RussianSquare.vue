@@ -178,7 +178,7 @@ export default {
     return await new Promise((resolve) => {
       this.dialog.warning({
         title: "是否离开",
-        content: "俄罗斯方块正在运行，是否离开？",
+        content: `"${this.gameName}" 正在运行，是否离开？`,
         maskClosable: false,
         positiveText: "离开",
         negativeText: "留下",
