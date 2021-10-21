@@ -1,25 +1,13 @@
 
-# ames
+# Games
+Naive-ui, vicons
 
-## Project setup
-```
-npm install
-```
+Vue.js, Vue-Router
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Firebase
 
-### Compiles and minifies for production
-```
-npm run build
-```
+eslint-plugin-prettier
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Static site deployed
+https://n-index-games.onrender.com/
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
