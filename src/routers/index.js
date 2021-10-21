@@ -1,14 +1,30 @@
-import Home from "../views/Home";
-import HungrySnake from "../views/HungrySnake";
-import InsertNeedle from "../views/InsertNeedle";
-import RussianSquare from "../views/RussianSquare";
 import { createWebHashHistory, createRouter } from "vue-router";
 
 const routes = [
-  { path: "/home", component: Home },
-  { path: "/hungry-snake", component: HungrySnake },
-  { path: "/insert-needle", component: InsertNeedle },
-  { path: "/russian-square", component: RussianSquare },
+  {
+    path: "/home",
+    component: () => {
+      import("../views/Home");
+    },
+  },
+  {
+    path: "/hungry-snake",
+    component: () => {
+      import("../views/HungrySnake");
+    },
+  },
+  {
+    path: "/insert-needle",
+    component: () => {
+      import("../views/InsertNeedle");
+    },
+  },
+  {
+    path: "/russian-square",
+    component: () => {
+      import("../views/RussianSquare");
+    },
+  },
 ];
 const router = createRouter({
   history: createWebHashHistory(),

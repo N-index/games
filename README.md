@@ -1,5 +1,5 @@
 
-# games
+# ames
 
 ## Project setup
 ```
