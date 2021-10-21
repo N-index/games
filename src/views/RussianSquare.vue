@@ -1,7 +1,5 @@
 <template>
-  <game-rate :game-name="'square'"></game-rate>
-  <n-button type="primary">查看square的 rate 信息</n-button>
-
+  <game-rate :gameKey="gameKey"></game-rate>
   <n-space>
     <div
       id="russian-square"
@@ -50,7 +48,7 @@
           <div class="score">分数：{{ score }}</div>
 
           <div class="btn-group">
-            <n-button type="primary" round @click="startGame">
+            <n-button type="primary" round dashed @click="startGame">
               <template #icon v-if="!isStart">
                 <n-icon>
                   <Navigate />
@@ -63,7 +61,7 @@
         </aside>
       </section>
     </div>
-    <game-detail-card :title="'俄罗斯方块'">
+    <game-detail-card :title="gameName" @toggleDrawer="toggleDrawer">
       <template v-slot:introduce>
         《俄罗斯方块》（俄语：Тетрис，英语：Tetris），是1980年末期至1990年代初期风靡全世界的电脑游戏，是落下型益智游戏的始祖，为苏联首个在美国发布的娱乐软件。此游戏最初由阿列克谢·帕基特诺夫在苏联设计和编写，于1984年6月6日首次发布，当时他正在苏联科学院电算中心工作。此游戏的名称是由希腊语数字四的前缀“tetra-”（因所有落下方块皆由四块组成）和帕基特诺夫最喜欢的运动网球（“tennis”）拼接而成。
       </template>
@@ -123,9 +121,17 @@
       </template>
     </game-detail-card>
   </n-space>
+  <game-rank-drawer
+    :gameName="gameName"
+    :gameKey="gameKey"
+    :isRankDrawerOpen="isRankDrawerOpen"
+    @toggleDrawer="toggleDrawer"
+  >
+  </game-rank-drawer>
 </template>
 
 <script>
+import GameRankDrawer from "../components/GameRankDrawer";
 import GameRate from "../components/GameRate";
 import {
   NButton,
@@ -146,12 +152,24 @@ import {
   ArrowDownOutline,
 } from "@vicons/ionicons5";
 import { shapes } from "../utils/squareShapes";
+import { ref } from "vue";
+import { addScore } from "../firebase/access";
 
 export default {
   setup() {
     const dialog = useDialog();
+    const gameName = "俄罗斯方块";
+    const gameKey = "square";
+    const isRankDrawerOpen = ref(false);
+    function toggleDrawer() {
+      isRankDrawerOpen.value = !isRankDrawerOpen.value;
+    }
     return {
       dialog,
+      gameKey,
+      gameName,
+      isRankDrawerOpen,
+      toggleDrawer,
     };
   },
   async beforeRouteLeave() {
@@ -174,6 +192,7 @@ export default {
     });
   },
   components: {
+    GameRankDrawer,
     GameRate,
     GameDetailCard,
     NButton,
@@ -241,6 +260,7 @@ export default {
       clearTimeout(this.timer);
       this.isStart = false;
       this.isEnd = true;
+      addScore(this.gameKey, this.score);
     },
     setTimer() {
       this.timer = setTimeout(() => {

@@ -5,7 +5,7 @@ import RussianSquare from "../views/RussianSquare";
 import { createWebHashHistory, createRouter } from "vue-router";
 
 const routes = [
-  { path: "/", component: Home },
+  { path: "/home", component: Home },
   { path: "/hungry-snake", component: HungrySnake },
   { path: "/insert-needle", component: InsertNeedle },
   { path: "/russian-square", component: RussianSquare },

@@ -1,8 +1,6 @@
 <template>
   <n-space vertical>
-    <game-rate :game-name="'snake'"></game-rate>
-    <n-button type="primary">查看snake的rate</n-button>
-
+    <game-rate :gameKey="gameKey"></game-rate>
     <n-space>
       <div
         style="margin-right: auto"
@@ -44,7 +42,7 @@
         </div>
       </div>
       <n-space vertical>
-        <game-detail-card :title="'贪吃蛇 🐍'">
+        <game-detail-card :title="gameName" @toggleDrawer="toggleDrawer">
           <template v-slot:introduce>
             贪吃蛇（Snake）是一个起源於1976年的街机游戏 Blockade。<br />在游戏中，玩家操控一条细长的直线（称为蛇），它会不停前进，玩家只能操控蛇的头部朝向（上下左右），一路吃掉食物，并要避免触碰到自身或者其他障碍物。<br />每次貪食蛇吃掉一件食物，它的身体便增长一些。吃掉一些食物后會使蛇的移動速度逐漸加快，让游戏的难度渐渐变大。-->
           </template>
@@ -105,6 +103,13 @@
       </n-space>
     </n-space>
   </n-space>
+  <game-rank-drawer
+    :gameName="gameName"
+    :gameKey="gameKey"
+    :isRankDrawerOpen="isRankDrawerOpen"
+    @toggleDrawer="toggleDrawer"
+  >
+  </game-rank-drawer>
 </template>
 
 <script>
@@ -126,15 +131,27 @@ import {
   TimerOutline,
 } from "@vicons/ionicons5";
 import GameDetailCard from "../components/GameDetailCard";
-
+import GameRankDrawer from "../components/GameRankDrawer";
 import GameRate from "../components/GameRate";
+import { ref } from "vue";
+import { addScore } from "../firebase/access";
 
 export default {
   name: "HungrySnake",
   setup() {
     const dialog = useDialog();
+    const isRankDrawerOpen = ref(false);
+    function toggleDrawer() {
+      isRankDrawerOpen.value = !isRankDrawerOpen.value;
+    }
+    const gameName = "贪吃小蛇";
+    const gameKey = "snake";
     return {
+      gameKey,
+      gameName,
       dialog,
+      isRankDrawerOpen,
+      toggleDrawer,
     };
   },
   async beforeRouteLeave() {
@@ -159,6 +176,7 @@ export default {
   components: {
     GameRate,
     GameDetailCard,
+    GameRankDrawer,
     NSpace,
     NIcon,
     ArrowDownOutline,
@@ -184,8 +202,16 @@ export default {
       moveTimer: null,
       improveSpeedTimer: null,
       improveSpeedInterval: 15000,
-      snakeBody: [[5, 5]],
-      food: [2, 3],
+      snakeBody: [
+        [
+          Math.floor(Math.random() * 20 + 1),
+          Math.floor(Math.random() * 20 + 1),
+        ],
+      ],
+      food: [
+        Math.floor(Math.random() * 20 + 1),
+        Math.floor(Math.random() * 20 + 1),
+      ],
       speed: 800,
     };
   },
@@ -198,10 +224,6 @@ export default {
     },
   },
   methods: {
-    showFuck() {
-      console.log("funky");
-      console.log("any body like me? ");
-    },
     startGame() {
       if (this.isStart) return;
       this.isStart = true;
@@ -209,6 +231,17 @@ export default {
       this.setLiveTimer();
       this.setMoveTimer();
       this.setSpeedTimer();
+      setTimeout(() => {
+        this.gameOver();
+      }, 10000);
+    },
+    gameOver() {
+      this.isStart = false;
+      this.time = 0;
+      clearInterval(this.liveTimer);
+      clearInterval(this.improveSpeedTimer);
+      clearInterval(this.moveTimer);
+      addScore(this.gameKey, Math.floor(Math.random() * 100));
     },
     setLiveTimer() {
       clearInterval(this.liveTimer);

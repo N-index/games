@@ -17,14 +17,35 @@
         <slot name="playMethod">用手玩</slot>
       </n-collapse-item>
     </n-collapse>
+    <n-divider></n-divider>
+    <n-space justify="center">
+      <n-button dashed @click="this.$emit('toggleDrawer')">
+        <template #icon>
+          <n-icon>
+            <BarChart />
+          </n-icon>
+        </template>
+        排行榜
+      </n-button>
+    </n-space>
   </n-card>
 </template>
 
 <script>
-import { NCard, NCollapseItem, NCollapse, NEllipsis, NIcon } from "naive-ui";
+import {
+  NCard,
+  NCollapseItem,
+  NCollapse,
+  NEllipsis,
+  NIcon,
+  NButton,
+  NDivider,
+  NSpace,
+} from "naive-ui";
 import {
   InformationCircleOutline,
   GameControllerOutline,
+  BarChart,
 } from "@vicons/ionicons5";
 
 export default {
@@ -40,7 +61,11 @@ export default {
     NCollapse,
     NEllipsis,
     NIcon,
-    //     NGrid, NGridItem,NTooltip,NDivider,NUl,NLi,
+    NButton,
+    NDivider,
+    NSpace,
+    BarChart,
+    //     NGrid, NGridItem,NTooltip,,NUl,NLi,
     // ArrowUpOutline, ArrowDownOutline, ArrowBackOutline, ArrowForwardOutline,
     InformationCircleOutline,
     GameControllerOutline,

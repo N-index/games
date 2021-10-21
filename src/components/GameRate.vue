@@ -1,5 +1,5 @@
 <template>
-  {{ gameName }} 的受欢迎指数：
+  {{ gameKey }} 的受欢迎指数：
   <n-rate
     :value="rateVal"
     :on-update:value="rate"
@@ -21,8 +21,8 @@ export default {
     const isVoted = ref(false);
 
     const rate = (score) => {
-      message.success(`为 ${props.gameName} 投了 ${score} 分。`);
-      addRate(props.gameName, score);
+      message.success(`为 ${props.gameKey} 投了 ${score} 分。`);
+      addRate(props.gameKey, score);
       rateVal.value = score;
       isVoted.value = true;
     };
@@ -37,7 +37,7 @@ export default {
     NRate,
   },
   props: {
-    gameName: {
+    gameKey: {
       type: String,
       required: true,
     },

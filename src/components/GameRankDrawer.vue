@@ -1,7 +1,12 @@
 <template>
-  <n-drawer v-model:show="isDrawerOpen" :width="450" placement="right">
+  <n-drawer
+    :show="isRankDrawerOpen"
+    @update:show="this.$emit('toggleDrawer')"
+    :width="450"
+    placement="right"
+  >
     <n-scrollbar>
-      <n-drawer-content :title="gameName + 'rate'">
+      <n-drawer-content :title="gameName + '——排行榜'">
         <n-skeleton text :repeat="3" v-if="ratesLoading" />
         <template v-else>
           <n-data-table
@@ -19,9 +24,17 @@
 </template>
 
 <script>
-import { getRates } from "../firebase/access";
+import { getScore } from "../firebase/access";
 import { h, reactive, ref } from "vue";
-import { NTime, useLoadingBar } from "naive-ui";
+import {
+  NTime,
+  useLoadingBar,
+  NDrawer,
+  NDrawerContent,
+  NScrollbar,
+  NDataTable,
+  NSkeleton,
+} from "naive-ui";
 const createColumns = () => {
   return [
     {
@@ -36,12 +49,12 @@ const createColumns = () => {
     },
     {
       title: "时间",
-      key: "vote_time",
+      key: "add_time",
       render(row) {
         return h(
           NTime,
           {
-            time: row.vote_time["seconds"],
+            time: row.add_time["seconds"],
             unix: true,
             type: "relative",
           },
@@ -52,12 +65,26 @@ const createColumns = () => {
   ];
 };
 export default {
-  name: "GameRatesDrawer",
   props: {
     gameName: {
       type: String,
       required: true,
     },
+    gameKey: {
+      type: String,
+      required: true,
+    },
+    isRankDrawerOpen: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  components: {
+    NDrawer,
+    NDrawerContent,
+    NScrollbar,
+    NDataTable,
+    NSkeleton,
   },
   setup(props) {
     const loadingBar = useLoadingBar();
@@ -88,15 +115,12 @@ export default {
         },
       };
     };
-    const isDrawerOpen = ref(false);
 
     const openDrawer = async () => {
       loadingBar.start();
       ratesLoading.value = true;
-      isDrawerOpen.value = true;
       try {
-        ratesData.value = await getRates(props.gameName);
-        console.log("取回了rates信息！");
+        ratesData.value = await getScore(props.gameKey);
         loadingBar.finish();
         ratesLoading.value = false;
       } catch {
@@ -104,7 +128,6 @@ export default {
       }
     };
     return {
-      isDrawerOpen,
       ratesData,
       rowKey(rowData) {
         return rowData.column1;
@@ -115,6 +138,12 @@ export default {
       columns,
       openDrawer,
     };
+  },
+  watch: {
+    isRankDrawerOpen(val) {
+      if (!val) return;
+      this.openDrawer();
+    },
   },
 };
 </script>
