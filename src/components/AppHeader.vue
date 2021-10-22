@@ -15,11 +15,17 @@
       id="github"
       style="text-decoration: none"
     >
-      <n-button :round="round" :circle="circle" color="#000">
+      <n-button circle :color="btnColor" v-if="isMobile">
         <template #icon>
-          <n-icon><LogoGithub /></n-icon>
+          <n-icon :color="iconColor"><LogoGithub /></n-icon>
         </template>
-        <span id="github-text">Github</span>
+      </n-button>
+
+      <n-button round :color="btnColor" v-else style="">
+        <template #icon>
+          <n-icon :color="iconColor"><LogoGithub /></n-icon>
+        </template>
+        Github
       </n-button>
     </n-a>
   </header>
@@ -36,17 +42,30 @@ export default {
     NA,
     LogoGithub,
   },
+  props: {
+    isDarkTheme: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  computed: {
+    btnColor() {
+      return this.isDarkTheme ? "#fff" : "#000";
+    },
+    iconColor() {
+      return this.isDarkTheme ? "#000" : "#fff";
+    },
+  },
   data() {
     return {
-      round: true,
-      circle: false,
+      isMobile: false,
     };
   },
   created() {
     const res = window.matchMedia("(max-width: 700px)");
-    [this.round, this.circle] = [!res.matches, res.matches];
+    this.isMobile = res.matches;
     res.onchange = ({ matches }) => {
-      [this.round, this.circle] = [!matches, matches];
+      this.isMobile = matches;
     };
   },
 };
@@ -76,14 +95,7 @@ header {
   position: fixed;
   right: 1.2vw;
 }
-@media screen and (max-width: 700px) {
-  #github-text {
-    display: none;
-  }
-  #github-text .n-button__icon {
-    margin: 0 !important;
-  }
-}
+
 @keyframes in {
   from {
     transform: rotate(0deg);

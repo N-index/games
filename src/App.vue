@@ -2,7 +2,7 @@
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme="theme">
     <n-layout position="absolute">
       <n-layout-header bordered position="static">
-        <app-header></app-header>
+        <app-header :is-dark-theme="isDarkTheme"></app-header>
       </n-layout-header>
       <n-layout
         has-sider

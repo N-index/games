@@ -65,11 +65,8 @@ export default {
     NDivider,
     NSpace,
     BarChart,
-    //     NGrid, NGridItem,NTooltip,,NUl,NLi,
-    // ArrowUpOutline, ArrowDownOutline, ArrowBackOutline, ArrowForwardOutline,
     InformationCircleOutline,
     GameControllerOutline,
-    // ,TimerOutline
   },
   name: "GameDetail.vue",
 };

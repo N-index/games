@@ -97,6 +97,7 @@
               <n-li>暂停：空格键</n-li>
               <n-li>黑色是蛇的身体</n-li>
               <n-li>红色是目标食物</n-li>
+              <n-li> <n-text type="success"> 任意方向键开始游戏</n-text></n-li>
             </n-ul>
           </template>
         </game-detail-card>
@@ -121,6 +122,7 @@ import {
   NTooltip,
   NUl,
   NLi,
+  NText,
   useDialog,
 } from "naive-ui";
 import {
@@ -189,6 +191,7 @@ export default {
     TimerOutline,
     NUl,
     NLi,
+    NText,
   },
   data() {
     return {
