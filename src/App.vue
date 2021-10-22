@@ -13,11 +13,14 @@
           bordered
           show-trigger
           collapse-mode="width"
+          :collapsed="collapsed"
           :collapsed-width="64"
+          @collapse="manuallyCol(true)"
+          @expand="manuallyCol(false)"
           :width="240"
           :native-scrollbar="false"
         >
-          <app-menu></app-menu>
+          <app-menu :collapsed="collapsed"></app-menu>
           <n-divider />
           <n-space justify="center" align="center">
             主题
@@ -35,7 +38,6 @@
             </n-switch>
           </n-space>
         </n-layout-sider>
-        <!--      BalloonOutline-->
         <n-layout position="static" style="" :native-scrollbar="false">
           <n-space
             style="width: 100%; min-height: calc(100vh - var(--header-height))"
@@ -83,6 +85,7 @@ export default defineComponent({
       zhCN,
       dateZhCN,
       isDarkTheme: JSON.parse(localStorage.getItem("isDarkTheme")),
+      collapsed: false,
     };
   },
   components: {
@@ -106,6 +109,23 @@ export default defineComponent({
     theme() {
       localStorage.setItem("isDarkTheme", JSON.stringify(this.isDarkTheme));
       return this.isDarkTheme ? darkTheme : null;
+    },
+  },
+  created() {
+    const media = window.matchMedia("(max-width: 760px)");
+    this.collapsed = JSON.parse(localStorage.getItem("colFlag"))
+      ? JSON.parse(localStorage.getItem("colValue"))
+      : false;
+    media.onchange = ({ matches }) => {
+      if (JSON.parse(localStorage.getItem("colFlag"))) return;
+      this.collapsed = matches;
+    };
+  },
+  methods: {
+    manuallyCol(val) {
+      this.collapsed = val;
+      localStorage.setItem("colFlag", JSON.stringify(true));
+      localStorage.setItem("colVal", JSON.stringify(this.collapsed));
     },
   },
 });

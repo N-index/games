@@ -1,5 +1,6 @@
 <template>
   <n-menu
+    :collapsed="collapsed"
     :collapsed-width="64"
     :collapsed-icon-size="22"
     mode="vertical"
@@ -46,6 +47,12 @@ const menuOptions = [
 export default {
   components: {
     NMenu,
+  },
+  props: {
+    collapsed: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {

@@ -386,7 +386,7 @@ header.header ul {
 
 section.section {
   display: flex;
-  gap: 15px;
+  gap: 5px;
 }
 
 aside.aside {
@@ -401,12 +401,10 @@ aside.aside .shape {
 .next-shape {
   display: flex;
   flex-direction: column;
-  gap: 5px;
 }
 
 .next-shape .row {
   display: flex;
-  gap: 5px;
 }
 
 .next-shape .square {
@@ -438,12 +436,12 @@ main.main {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 main.main .row {
   display: flex;
-  gap: 2px;
+  gap: 1px;
 }
 
 main.main .square {

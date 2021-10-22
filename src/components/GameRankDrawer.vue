@@ -139,6 +139,7 @@ export default {
       openDrawer,
     };
   },
+  created() {},
   watch: {
     isRankDrawerOpen(val) {
       if (!val) return;
