@@ -9,5 +9,6 @@ Firebase
 eslint-plugin-prettier
 
 ## Static site deployed
-https://n-index-games.onrender.com/
+1. https://games-n-index.vercel.app/
+2. https://n-index-games.onrender.com/
 
