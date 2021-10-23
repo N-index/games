@@ -21,9 +21,8 @@
           :native-scrollbar="false"
         >
           <app-menu :collapsed="collapsed"></app-menu>
-          <n-divider />
+          <n-divider dashed>主题</n-divider>
           <n-space justify="center" align="center">
-            主题
             <n-switch v-model:value="isDarkTheme">
               <template #checked>
                 <n-icon>
@@ -36,6 +35,12 @@
                 </n-icon>
               </template>
             </n-switch>
+          </n-space>
+          <n-divider dashed></n-divider>
+          <n-space justify="center">
+            <n-message-provider>
+              <login-modal></login-modal>
+            </n-message-provider>
           </n-space>
         </n-layout-sider>
         <n-layout position="static" style="" :native-scrollbar="false">
@@ -62,6 +67,7 @@
 import { defineComponent } from "vue";
 import AppHeader from "./components/AppHeader";
 import AppMenu from "./components/AppMenu";
+import LoginModal from "./components/LoginModal";
 import {
   NIcon,
   NSwitch,
@@ -89,6 +95,7 @@ export default defineComponent({
     };
   },
   components: {
+    LoginModal,
     NDialogProvider,
     NConfigProvider,
     NMessageProvider,

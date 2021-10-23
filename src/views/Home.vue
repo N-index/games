@@ -7,7 +7,7 @@
       max-width: 500px;
       border-radius: 20px;
       overflow: hidden;
-      user-select: ;
+      user-select: none;
     "
   >
     <img
