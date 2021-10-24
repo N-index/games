@@ -123,8 +123,12 @@ export default {
         ratesData.value = await getScore(props.gameKey);
         loadingBar.finish();
         ratesLoading.value = false;
-      } catch {
+      } catch (e) {
+        console.log(e.code);
+        console.log(e.message);
         loadingBar.error();
+
+        throw e;
       }
     };
     return {

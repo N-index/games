@@ -4,7 +4,7 @@ import {
   getDocs,
   query,
   orderBy,
-} from "firebase/firestore/lite";
+} from "firebase/firestore";
 import { db } from "./db";
 
 function getRandomIntBetween(min, max) {
