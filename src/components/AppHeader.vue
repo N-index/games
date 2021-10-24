@@ -94,7 +94,7 @@ header {
 }
 #github {
   position: fixed;
-  right: 1.2vw;
+  right: 2vw;
 }
 
 @keyframes in {

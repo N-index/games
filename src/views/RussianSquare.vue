@@ -50,12 +50,6 @@
 
             <div class="btn-group">
               <n-button type="primary" round dashed @click="startGame">
-                <template #icon v-if="!isStart">
-                  <n-icon>
-                    <Navigate />
-                  </n-icon>
-                </template>
-
                 {{ isStart ? "重新开始" : "开始" }}
               </n-button>
             </div>
@@ -147,7 +141,6 @@ import {
 } from "naive-ui";
 import GameDetailCard from "./components/GameDetailCard";
 import {
-  Navigate,
   PhoneLandscapeSharp,
   ArrowBackOutline,
   ArrowForwardOutline,
@@ -176,7 +169,6 @@ export default {
   },
   async beforeRouteLeave() {
     if (!this.isStart) return true;
-
     return await new Promise((resolve) => {
       this.dialog.warning({
         title: "是否离开",
@@ -200,7 +192,6 @@ export default {
     NButton,
     NIcon,
     NSpace,
-    Navigate,
     PhoneLandscapeSharp,
     ArrowBackOutline,
     ArrowForwardOutline,

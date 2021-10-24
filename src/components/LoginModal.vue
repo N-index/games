@@ -18,12 +18,12 @@
           <AtCircleOutline />
         </n-icon>
       </n-button>
-      <n-button text style="font-size: 24px" @click="loginInWithGithub">
+      <n-button text style="font-size: 24px" @click="logInWithGithub">
         <n-icon>
           <LogoGithub />
         </n-icon>
       </n-button>
-      <n-button text style="font-size: 24px">
+      <n-button text style="font-size: 24px" @click="signInWithGoogle">
         <n-icon>
           <LogoGoogle />
         </n-icon>
@@ -105,7 +105,7 @@ import {
   onAuthStateChanged,
   isSignInLink,
   sendEmail,
-  signIn,
+  signInWithEmail,
   signOut,
 } from "../firebase/auth/emailLinkAuth";
 import {
@@ -128,6 +128,10 @@ import {
   LogoGoogle,
 } from "@vicons/ionicons5";
 import { signInWithGithub } from "../firebase/auth/githubAuth";
+import {
+  signInWithGoogle,
+  getGoogleRedirectResult,
+} from "../firebase/auth/googleAuth";
 export default {
   name: "LoginModal",
   components: {
@@ -223,10 +227,39 @@ export default {
         this.loginInfo = {};
       }
     });
-    this.signIn();
+    this.detectSignInWithLink();
+    this.detectGoogleRedirect();
   },
   methods: {
-    async loginInWithGithub() {
+    signInWithGoogle,
+    async detectGoogleRedirect() {
+      if (
+        JSON.parse(localStorage.getItem("isLogIn")) ||
+        !JSON.parse(localStorage.getItem("waitingGoogleDirect"))
+      )
+        return;
+
+      const msg = this.message["loading"]("正在认证 Google...", {
+        duration: 15000,
+      });
+      try {
+        await getGoogleRedirectResult();
+        [msg.type, msg.content] = ["success", "已登录"];
+        // const { result, credential, user } = await getGoogleRedirectResult();
+        // console.log(`${result},${credential},${user}`);
+      } catch (e) {
+        [msg.type, msg.content] = [
+          "error",
+          "Google 验证失败，请确保第三方 Cookie 处于开启状态 ",
+        ];
+      } finally {
+        localStorage.setItem("waitingGoogleDirect", JSON.stringify(false));
+        setTimeout(() => {
+          msg.destroy();
+        }, 2000);
+      }
+    },
+    async logInWithGithub() {
       try {
         const { result, credential } = await signInWithGithub();
         const token = credential.accessToken;
@@ -251,7 +284,7 @@ export default {
           this.message.error(`错误代码：${e.code},错误信息：${e.message}`);
         });
     },
-    async signIn() {
+    async detectSignInWithLink() {
       if (!JSON.parse(localStorage.getItem("isLogIn")) && isSignInLink()) {
         const msg = this.message["loading"]("正在认证...", {
           duration: 15000,
@@ -262,7 +295,7 @@ export default {
         }
         try {
           // 此处的result供临时使用
-          const result = await signIn(email);
+          const result = await signInWithEmail(email);
           localStorage.setItem("loginInfo", JSON.stringify(result));
           [msg.type, msg.content] = [
             "success",

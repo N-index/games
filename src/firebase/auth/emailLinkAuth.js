@@ -30,7 +30,7 @@ const isSignInLink = () => {
   return isSignInWithEmailLink(emailLinkAuth, window.location.href);
 };
 
-const signIn = async (email) => {
+const signInWithEmail = async (email) => {
   // eslint-disable-next-line no-useless-catch
   try {
     const result = await signInWithEmailLink(
@@ -50,6 +50,6 @@ export {
   onAuthStateChanged,
   sendEmail,
   isSignInLink,
-  signIn,
+  signInWithEmail,
   signOut,
 };
