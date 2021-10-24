@@ -3,19 +3,19 @@
     <n-avatar round :size="80" :src="loginInfo.photoURL" />
     <n-gradient-text
       type="primary"
-      v-if="loginInfo.displayName"
+      v-if="loginInfo.displayName || loginInfo.providerData.displayName"
       size="22"
       style="font-weight: 900"
     >
-      {{ loginInfo.displayName }}
+      {{ loginInfo.displayName || loginInfo.providerData.displayName }}
     </n-gradient-text>
   </n-space>
   <n-divider v-if="loginInfo.photoURL">详情</n-divider>
   <n-ul style="list-style: none">
-    <n-li v-if="loginInfo.email">
+    <n-li v-if="loginInfo.email || loginInfo.providerData.email">
       <n-space align="center">
         <n-icon size="25"><Mail /> </n-icon>
-        {{ loginInfo.email }}
+        {{ loginInfo.email || loginInfo.providerData.email }}
         <n-icon v-if="loginInfo.emailVerified" :color="checkedColor">
           <ShieldCheckmark />
         </n-icon>

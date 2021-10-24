@@ -2,7 +2,13 @@
   <n-divider>认证</n-divider>
   <template v-if="isLogIn">
     <n-button @click="showModal = true" round>
-      {{ loginInfo.email || loginInfo.displayName || "登录信息" }}
+      {{
+        loginInfo.email ||
+        loginInfo.providerData.email ||
+        loginInfo.displayName ||
+        loginInfo.providerData.displayName ||
+        "登录信息"
+      }}
     </n-button>
   </template>
   <template v-else>
@@ -192,6 +198,8 @@ export default {
         // 而要根据这些接口（https://firebase.google.com/docs/reference/js/v8/firebase.User）来获取，
         // 所以可以先toJSON然后取lastLoginAt
         this.isLogIn = true;
+        console.log(user);
+        console.log(user.toJSON());
         const {
           displayName,
           photoURL,
@@ -199,6 +207,7 @@ export default {
           emailVerified,
           createdAt,
           lastLoginAt,
+          providerData: [providerData],
         } = user.toJSON();
         this.loginInfo = {
           displayName,
@@ -207,6 +216,7 @@ export default {
           emailVerified,
           createdAt,
           lastLoginAt,
+          providerData,
         };
       } else {
         this.isLogIn = false;
@@ -222,9 +232,9 @@ export default {
         const token = credential.accessToken;
         const user = result.user;
         console.log(`${credential},${token},${user}`);
-        this.message.success(`github登陆成功！`);
-
-        this.message.success(`${credential},${token},${user}`);
+        this.message.success(`已通过 Github 登录。`);
+        // console.log(user);
+        // this.message.success(`${credential},${token},${user}`);
       } catch (e) {
         this.message.error(`code: ${e.code}, message: ${e.message}`);
         throw e;
