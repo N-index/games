@@ -148,11 +148,11 @@ export default {
     };
   },
   watch: {
-    isLogin(val) {
+    isLogIn(val) {
       if (val) {
-        localStorage.setItem("isLogin", JSON.stringify(true));
+        localStorage.setItem("isLogIn", JSON.stringify(true));
       } else {
-        localStorage.setItem("isLogin", JSON.stringify(false));
+        localStorage.setItem("isLogIn", JSON.stringify(false));
       }
     },
   },
@@ -235,20 +235,14 @@ export default {
         .then(() => {
           this.message.success("账号已退出");
           this.showModal = false;
+          this.isLogIn = false;
         })
         .catch((e) => {
           this.message.error(`错误代码：${e.code},错误信息：${e.message}`);
         });
     },
     async signIn() {
-      if (isSignInLink()) {
-        if (JSON.parse(localStorage.getItem("isLogin"))) {
-          this.message.info("已登录");
-          setTimeout(() => {
-            location.search = "";
-          }, 1000);
-          return;
-        }
+      if (!JSON.parse(localStorage.getItem("isLogIn")) && isSignInLink()) {
         const msg = this.message["loading"]("正在认证...", {
           duration: 15000,
         });
@@ -259,7 +253,6 @@ export default {
         try {
           // 此处的result供临时使用
           const result = await signIn(email);
-
           localStorage.setItem("loginInfo", JSON.stringify(result));
           [msg.type, msg.content] = [
             "success",
@@ -274,8 +267,8 @@ export default {
         } finally {
           setTimeout(() => {
             msg.destroy();
+            location.search = "";
           }, 2000);
-          // location.search
         }
       }
     },

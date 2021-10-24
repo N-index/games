@@ -73,13 +73,8 @@ export default {
     Timer,
     Key,
   },
-  data() {
-    return {
-      checkedColor: useThemeVars().value.primaryColor,
-    };
-  },
   created() {
-    console.log(useThemeVars().value);
+    this.checkedColor = useThemeVars().value.primaryColor;
   },
 };
 </script>
