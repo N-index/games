@@ -31,7 +31,7 @@
     <n-card
       v-else
       style="width: 95%; max-width: 250px"
-      title="登录"
+      title="无密登录"
       :bordered="false"
       size="small"
     >
@@ -45,15 +45,16 @@
         :disabled="formDisable"
         :model="formValue"
         :rules="rules"
-        inline
         label-placement="left"
       >
-        <n-form-item label="邮箱" path="email">
+        <n-form-item path="email">
           <n-auto-complete
             :options="options"
             v-model:value="formValue.email"
             blur-after-select
-          ></n-auto-complete>
+            placeholder="邮箱"
+          >
+          </n-auto-complete>
         </n-form-item>
       </n-form>
 
