@@ -132,7 +132,7 @@ import {
   ArrowForwardOutline,
   TimerOutline,
 } from "@vicons/ionicons5";
-import GameDetailCard from "../components/GameDetailCard";
+import GameDetailCard from "./components/GameDetailCard";
 import GameRankDrawer from "../components/GameRankDrawer";
 import GameRate from "../components/GameRate";
 import { ref } from "vue";

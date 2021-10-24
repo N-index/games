@@ -143,7 +143,7 @@ import {
   NText,
   useDialog,
 } from "naive-ui";
-import GameDetailCard from "../components/GameDetailCard";
+import GameDetailCard from "./components/GameDetailCard";
 import {
   Navigate,
   PhoneLandscapeSharp,

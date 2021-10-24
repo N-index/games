@@ -50,7 +50,7 @@ export default {
   },
   props: {
     collapsed: {
-      type: String,
+      type: Boolean,
       required: true,
     },
   },

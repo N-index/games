@@ -1,27 +1,38 @@
 <template>
-  <n-button
-    :type="btnType"
-    @click="showModal = true"
-    icon-placement="right"
-    round
-  >
-    <template #icon v-if="!isLogIn">
-      <n-icon> <AtCircleOutline /></n-icon>
-    </template>
-    {{ isLogIn ? loginInfo.email : "无密码登录" }}</n-button
-  >
+  <n-divider>认证</n-divider>
+  <template v-if="isLogIn">
+    <n-button @click="showModal = true" round>
+      {{ loginInfo.email || loginInfo.displayName || "登录信息" }}
+    </n-button>
+  </template>
+  <template v-else>
+    <n-space>
+      <n-button text style="font-size: 24px" @click="showModal = true">
+        <n-icon>
+          <AtCircleOutline />
+        </n-icon>
+      </n-button>
+      <n-button text style="font-size: 24px" @click="loginInWithGithub">
+        <n-icon>
+          <LogoGithub />
+        </n-icon>
+      </n-button>
+      <n-button text style="font-size: 24px">
+        <n-icon>
+          <LogoGoogle />
+        </n-icon>
+      </n-button>
+    </n-space>
+  </template>
+
   <n-modal v-model:show="showModal">
     <n-card
       v-if="isLogIn"
       title="个人信息"
-      style="width: 95%; max-width: 300px"
+      style="width: 95%; max-width: 350px"
       size="small"
     >
-      你好 {{ loginInfo.email }}: <br />
-      邮箱验证与否： {{ loginInfo.emailVerified }}
-      <br />
-      上次登录时间：{{ new Date(Number(loginInfo.lastLoginAt)) }} <br />
-      注册时间：{{ new Date(Number(loginInfo.createdAt)) }}<br />
+      <user-info :loginInfo="loginInfo"></user-info>
       <template #action>
         <n-space justify="end">
           <n-button type="warning" @click="logOut">退出登录</n-button>
@@ -82,16 +93,17 @@
 
 <script>
 import isEmail from "validator/es/lib/isEmail";
-
+import UserInfo from "./UserInfo";
 import {
-  auth,
+  emailLinkAuth,
   onAuthStateChanged,
   isSignInLink,
   sendEmail,
   signIn,
   signOut,
-} from "../firebase/auth";
+} from "../firebase/auth/emailLinkAuth";
 import {
+  NDivider,
   NAutoComplete,
   NModal,
   NCard,
@@ -102,10 +114,20 @@ import {
   NSpace,
 } from "naive-ui";
 import { useMessage } from "naive-ui";
-import { LogInOutline, AtCircleOutline, FingerPrint } from "@vicons/ionicons5";
+import {
+  LogInOutline,
+  AtCircleOutline,
+  FingerPrint,
+  LogoGithub,
+  LogoGoogle,
+} from "@vicons/ionicons5";
+import { signInWithGithub } from "../firebase/auth/githubAuth";
 export default {
   name: "LoginModal",
   components: {
+    UserInfo,
+    LogoGithub,
+    LogoGoogle,
     NAutoComplete,
     LogInOutline,
     FingerPrint,
@@ -117,6 +139,7 @@ export default {
     NForm,
     NFormItem,
     NSpace,
+    NDivider,
   },
   setup() {
     const message = useMessage();
@@ -130,11 +153,10 @@ export default {
       loading: false,
       showModal: false,
       formDisable: false,
-      btnType: "info",
       formValue: {
         email: "",
       },
-      loginInfo: "",
+      loginInfo: {},
       isLogIn: false,
       rules: {
         email: {
@@ -154,31 +176,53 @@ export default {
     };
   },
   created() {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(emailLinkAuth, (user) => {
+      console.log(emailLinkAuth.currentUser);
       if (user) {
         // 注意：表面上看到的user结构并不能直接获取，比如lastLoginAt无法直接在user上获取到，也不要直接JSON.stringify硬解。
         // 而要根据这些接口（https://firebase.google.com/docs/reference/js/v8/firebase.User）来获取，
         // 所以可以先toJSON然后取lastLoginAt
         this.isLogIn = true;
-        const { email, emailVerified, createdAt, lastLoginAt } = user.toJSON();
+        const {
+          displayName,
+          photoURL,
+          email,
+          emailVerified,
+          createdAt,
+          lastLoginAt,
+        } = user.toJSON();
         this.loginInfo = {
-          email: email,
-          emailVerified: emailVerified,
-          createdAt: createdAt,
-          lastLoginAt: lastLoginAt,
+          displayName,
+          photoURL,
+          email,
+          emailVerified,
+          createdAt,
+          lastLoginAt,
         };
-        this.btnType = "default";
       } else {
         this.isLogIn = false;
         this.loginInfo = {};
-        this.btnType = "info";
       }
     });
     this.signIn();
   },
   methods: {
+    async loginInWithGithub() {
+      try {
+        const { result, credential } = await signInWithGithub();
+        const token = credential.accessToken;
+        const user = result.user;
+        console.log(`${credential},${token},${user}`);
+        this.message.success(`github登陆成功！`);
+
+        this.message.success(`${credential},${token},${user}`);
+      } catch (e) {
+        this.message.error(`code: ${e.code}, message: ${e.message}`);
+        throw e;
+      }
+    },
     logOut() {
-      signOut(auth)
+      signOut(emailLinkAuth)
         .then(() => {
           this.message.success("账号已退出");
           this.showModal = false;
@@ -212,19 +256,21 @@ export default {
       this.formDisable = true;
       this.$refs["formRef"].validate(async (errors) => {
         if (!errors) {
+          const msg = this.message["loading"]("正在发送邮件,请稍等...", {
+            duration: 10000,
+          });
           try {
             localStorage.setItem("emailForSignIn", this.formValue.email);
-            const msg = this.message["loading"]("正在发送邮件,请稍等...", {
-              duration: 10000,
-            });
             await sendEmail(this.formValue.email);
             msg.type = "success";
             msg.content = "邮件已发送，请去确认";
+          } catch (e) {
+            msg.type = "error";
+            msg.content = `错误代码：${e.code}, 错误信息：${e.message}`;
+          } finally {
             setTimeout(() => {
               msg.destroy();
             }, 2000);
-          } catch (e) {
-            this.message.error(`错误代码：${e.code},错误信息：${e.message}`);
           }
         } else {
           this.message.error("输入有误，请检查");

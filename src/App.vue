@@ -36,7 +36,7 @@
               </template>
             </n-switch>
           </n-space>
-          <n-divider dashed></n-divider>
+
           <n-space justify="center">
             <n-message-provider>
               <login-modal></login-modal>
@@ -150,11 +150,5 @@ export default defineComponent({
   box-sizing: border-box;
   min-height: 100vh;
   --header-height: 80px;
-}
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
 }
 </style>

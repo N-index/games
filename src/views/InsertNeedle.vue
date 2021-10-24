@@ -61,7 +61,7 @@
 <script>
 import { NIcon, NLi, NSpace, NTooltip, NUl, useDialog } from "naive-ui";
 import { HandRightOutline } from "@vicons/ionicons5";
-import GameDetailCard from "../components/GameDetailCard";
+import GameDetailCard from "./components/GameDetailCard";
 import GameRate from "../components/GameRate";
 import GameRankDrawer from "../components/GameRankDrawer";
 import { addScore } from "../firebase/access";

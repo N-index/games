@@ -1,4 +1,4 @@
-import { initFirebaseApp } from "./init";
+import { initFirebaseApp } from "../init";
 import {
   getAuth,
   onAuthStateChanged,
@@ -15,25 +15,29 @@ const actionCodeSettings = {
   handleCodeInApp: true,
 };
 
-const auth = getAuth();
+const emailLinkAuth = getAuth();
 
 const sendEmail = async (email) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    await sendSignInLinkToEmail(emailLinkAuth, email, actionCodeSettings);
   } catch (e) {
     throw e;
   }
 };
 
 const isSignInLink = () => {
-  return isSignInWithEmailLink(auth, window.location.href);
+  return isSignInWithEmailLink(emailLinkAuth, window.location.href);
 };
 
 const signIn = async (email) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const result = await signInWithEmailLink(auth, email, window.location.href);
+    const result = await signInWithEmailLink(
+      emailLinkAuth,
+      email,
+      window.location.href
+    );
     window.localStorage.removeItem("emailForSignIn");
     return result;
   } catch (e) {
@@ -41,4 +45,11 @@ const signIn = async (email) => {
   }
 };
 
-export { auth, onAuthStateChanged, sendEmail, isSignInLink, signIn, signOut };
+export {
+  emailLinkAuth,
+  onAuthStateChanged,
+  sendEmail,
+  isSignInLink,
+  signIn,
+  signOut,
+};
