@@ -16,7 +16,7 @@
       <n-space align="center">
         <n-icon size="25"><Mail /> </n-icon>
         {{ loginInfo.email }}
-        <n-icon v-if="loginInfo.emailVerified">
+        <n-icon v-if="loginInfo.emailVerified" :color="checkedColor">
           <ShieldCheckmark />
         </n-icon>
       </n-space>
@@ -48,6 +48,7 @@ import {
   NAvatar,
   NTime,
   NGradientText,
+  useThemeVars,
 } from "naive-ui";
 import { Mail, ShieldCheckmark, Timer, Key } from "@vicons/ionicons5";
 export default {
@@ -67,11 +68,18 @@ export default {
     NUl,
     NLi,
     NIcon,
-
     Mail,
     ShieldCheckmark,
     Timer,
     Key,
+  },
+  data() {
+    return {
+      checkedColor: useThemeVars().value.primaryColor,
+    };
+  },
+  created() {
+    console.log(useThemeVars().value);
   },
 };
 </script>

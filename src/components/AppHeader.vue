@@ -9,6 +9,7 @@
       />
       <span>小游戏</span>
     </n-text>
+
     <n-a
       href="https://github.com/N-index/games"
       target="_blank"
@@ -21,7 +22,7 @@
         </template>
       </n-button>
 
-      <n-button round :color="btnColor" v-else style="">
+      <n-button round :color="btnColor" v-else>
         <template #icon>
           <n-icon :color="iconColor"><LogoGithub /></n-icon>
         </template>
@@ -50,10 +51,10 @@ export default {
   },
   computed: {
     btnColor() {
-      return this.isDarkTheme ? "#fff" : "#000";
+      return this.isDarkTheme ? "#eee" : "#111";
     },
     iconColor() {
-      return this.isDarkTheme ? "#000" : "#fff";
+      return this.isDarkTheme ? "#111" : "#eee";
     },
   },
   data() {

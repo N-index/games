@@ -1,7 +1,7 @@
 <template>
   <n-space vertical>
     <game-rate :gameKey="gameKey" :gameName="gameName"></game-rate>
-    <n-space>
+    <n-space justify="center">
       <div
         style="margin-right: auto"
         class="game"

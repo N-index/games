@@ -147,6 +147,15 @@ export default {
       message,
     };
   },
+  watch: {
+    isLogin(val) {
+      if (val) {
+        localStorage.setItem("isLogin", JSON.stringify(true));
+      } else {
+        localStorage.setItem("isLogin", JSON.stringify(false));
+      }
+    },
+  },
   data() {
     return {
       type: "default",
@@ -177,7 +186,7 @@ export default {
   },
   created() {
     onAuthStateChanged(emailLinkAuth, (user) => {
-      console.log(emailLinkAuth.currentUser);
+      // console.log(emailLinkAuth.currentUser);
       if (user) {
         // 注意：表面上看到的user结构并不能直接获取，比如lastLoginAt无法直接在user上获取到，也不要直接JSON.stringify硬解。
         // 而要根据这些接口（https://firebase.google.com/docs/reference/js/v8/firebase.User）来获取，
@@ -233,7 +242,16 @@ export default {
     },
     async signIn() {
       if (isSignInLink()) {
-        this.message.info("正在检测登录...");
+        if (JSON.parse(localStorage.getItem("isLogin"))) {
+          this.message.info("已登录");
+          setTimeout(() => {
+            location.search = "";
+          }, 1000);
+          return;
+        }
+        const msg = this.message["loading"]("正在认证...", {
+          duration: 15000,
+        });
         let email = localStorage.getItem("emailForSignIn");
         if (!email) {
           email = prompt("本地信息缺失，请重新输入邮箱");
@@ -241,12 +259,23 @@ export default {
         try {
           // 此处的result供临时使用
           const result = await signIn(email);
-          localStorage.removeItem("emailForSignIn");
+
           localStorage.setItem("loginInfo", JSON.stringify(result));
-          this.message.success(result.user.email + "验证成功，现已登录");
+          [msg.type, msg.content] = [
+            "success",
+            result.user.email + "验证成功，现已登录",
+          ];
           this.isLogIn = true;
         } catch (e) {
-          this.message.error(`错误代码：${e.code},错误信息：${e.message}`);
+          [msg.type, msg.content] = [
+            "error",
+            `错误代码：${e.code},错误信息：${e.message}`,
+          ];
+        } finally {
+          setTimeout(() => {
+            msg.destroy();
+          }, 2000);
+          // location.search
         }
       }
     },
@@ -257,16 +286,17 @@ export default {
       this.$refs["formRef"].validate(async (errors) => {
         if (!errors) {
           const msg = this.message["loading"]("正在发送邮件,请稍等...", {
-            duration: 10000,
+            duration: 15000,
           });
           try {
             localStorage.setItem("emailForSignIn", this.formValue.email);
             await sendEmail(this.formValue.email);
-            msg.type = "success";
-            msg.content = "邮件已发送，请去确认";
+            [msg.type, msg.content] = ["success", "邮件已发送，请去确认"];
           } catch (e) {
-            msg.type = "error";
-            msg.content = `错误代码：${e.code}, 错误信息：${e.message}`;
+            [msg.type, msg.content] = [
+              "error",
+              `错误代码：${e.code}, 错误信息：${e.message}`,
+            ];
           } finally {
             setTimeout(() => {
               msg.destroy();

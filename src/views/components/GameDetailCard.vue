@@ -1,5 +1,5 @@
 <template>
-  <n-card style="width: 300px" :title="title">
+  <n-card style="width: 250px" :title="title">
     <n-collapse :default-expanded-names="['2']" accordion>
       <n-collapse-item title="简介" name="1">
         <template #header-extra>
