@@ -3,10 +3,10 @@
   <template v-if="isLogIn">
     <n-button @click="showModal = true" round>
       {{
-        loginInfo.email ||
-        loginInfo.providerData.email ||
-        loginInfo.displayName ||
-        loginInfo.providerData.displayName ||
+        user.email ||
+        user.providerData.email ||
+        user.displayName ||
+        user.providerData.displayName ||
         "登录信息"
       }}
     </n-button>
@@ -38,7 +38,7 @@
       style="width: 95%; max-width: 350px"
       size="small"
     >
-      <user-info :loginInfo="loginInfo"></user-info>
+      <user-info :user="user"></user-info>
       <template #action>
         <n-space justify="end">
           <n-button type="warning" @click="logOut">退出登录</n-button>
@@ -98,6 +98,7 @@
 </template>
 
 <script>
+import { User } from "../firebase/models/user";
 import isEmail from "validator/es/lib/isEmail";
 import UserInfo from "./UserInfo";
 import {
@@ -175,7 +176,7 @@ export default {
       formValue: {
         email: "",
       },
-      loginInfo: {},
+      user: null,
       isLogIn: false,
       rules: {
         email: {
@@ -196,35 +197,16 @@ export default {
   },
   created() {
     onAuthStateChanged(emailLinkAuth, (user) => {
-      // console.log(emailLinkAuth.currentUser);
       if (user) {
         // 注意：表面上看到的user结构并不能直接获取，比如lastLoginAt无法直接在user上获取到，也不要直接JSON.stringify硬解。
         // 而要根据这些接口（https://firebase.google.com/docs/reference/js/v8/firebase.User）来获取，
         // 所以可以先toJSON然后取lastLoginAt
+        // this.message.loading("正在同步");
+        this.user = new User(user);
+        this.user.addUserToDb();
         this.isLogIn = true;
-        console.log(user);
-        console.log(user.toJSON());
-        const {
-          displayName,
-          photoURL,
-          email,
-          emailVerified,
-          createdAt,
-          lastLoginAt,
-          providerData: [providerData],
-        } = user.toJSON();
-        this.loginInfo = {
-          displayName,
-          photoURL,
-          email,
-          emailVerified,
-          createdAt,
-          lastLoginAt,
-          providerData,
-        };
       } else {
         this.isLogIn = false;
-        this.loginInfo = {};
       }
     });
     this.detectSignInWithLink();
@@ -261,10 +243,11 @@ export default {
     },
     async logInWithGithub() {
       try {
-        const { result, credential } = await signInWithGithub();
-        const token = credential.accessToken;
-        const user = result.user;
-        console.log(`${credential},${token},${user}`);
+        await signInWithGithub();
+        // const { result, credential } = await signInWithGithub();
+        // const token = credential.accessToken;
+        // const user = result.user;
+        // console.log(`${credential},${token},${user}`);
         this.message.success(`已通过 Github 登录。`);
         // console.log(user);
         // this.message.success(`${credential},${token},${user}`);
@@ -296,7 +279,6 @@ export default {
         try {
           // 此处的result供临时使用
           const result = await signInWithEmail(email);
-          localStorage.setItem("loginInfo", JSON.stringify(result));
           [msg.type, msg.content] = [
             "success",
             result.user.email + "验证成功，现已登录",

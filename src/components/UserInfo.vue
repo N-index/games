@@ -1,40 +1,42 @@
 <template>
-  <n-space v-if="loginInfo.photoURL" justify="center" align="center" vertical>
-    <n-avatar round :size="80" :src="loginInfo.photoURL" />
+  <n-space v-if="user.photoURL" justify="center" align="center" vertical>
+    <n-avatar round :size="80" :src="user.photoURL" />
     <n-gradient-text
       type="primary"
-      v-if="loginInfo.displayName || loginInfo.providerData.displayName"
+      v-if="user.displayName || user.providerData.displayName"
       size="22"
       style="font-weight: 900"
     >
-      {{ loginInfo.displayName || loginInfo.providerData.displayName }}
+      {{ user.displayName || user.providerData.displayName }}
     </n-gradient-text>
   </n-space>
-  <n-divider v-if="loginInfo.photoURL">详情</n-divider>
+
+  <n-divider v-if="user.photoURL">详情</n-divider>
   <n-ul style="list-style: none">
-    <n-li v-if="loginInfo.email || loginInfo.providerData.email">
+    <n-li v-if="user.email || user.providerData.email">
       <n-space align="center">
         <n-icon size="25"><Mail /> </n-icon>
-        {{ loginInfo.email || loginInfo.providerData.email }}
-        <n-icon v-if="loginInfo.emailVerified" :color="checkedColor">
+        {{ user.email || user.providerData.email }}
+        <n-icon v-if="user.emailVerified" :color="checkedColor">
           <ShieldCheckmark />
         </n-icon>
       </n-space>
     </n-li>
-    <n-li v-if="loginInfo.lastLoginAt">
+    <n-li v-if="user.lastLoginAt">
       <n-space align="center">
         <n-icon size="25"> <Timer /> </n-icon>
         上次登录：
-        <n-time :time="Number(loginInfo.lastLoginAt)" type="relative" />
+        <n-time :time="Number(user.lastLoginAt)" type="relative" />
       </n-space>
     </n-li>
-    <n-li v-if="loginInfo.createdAt">
+    <n-li v-if="user.createdAt">
       <n-space align="center">
         <n-icon size="25"> <Key /> </n-icon>
         注册时间：
-        <n-time :time="Number(loginInfo.createdAt)" />
+        <n-time :time="Number(user.createdAt)" />
       </n-space>
     </n-li>
+    <!--    <n-li>过期时间<n-time :time="Number(user.expirationTime)" /></n-li>-->
   </n-ul>
 </template>
 
@@ -51,12 +53,29 @@ import {
   useThemeVars,
 } from "naive-ui";
 import { Mail, ShieldCheckmark, Timer, Key } from "@vicons/ionicons5";
+import { getAuth, updateProfile } from "firebase/auth";
 export default {
+  methods: {
+    async updateToDbManually() {
+      // 更新 firestore 中的 user 表。
+      // await this.user.updateToDb("email", this.email);
+    },
+    updateProfile() {
+      if (!getAuth().currentUser) return;
+      // 更新 firebase auth 的信息
+      updateProfile(getAuth().currentUser, { displayName: "王八蛋" })
+        .then(() => {
+          console.log("profile updated!!");
+        })
+        .catch((e) => {
+          throw e;
+        });
+    },
+  },
   name: "UserInfo.vue",
   props: {
-    loginInfo: {
-      type: Object,
-      required: true,
+    user: {
+      require: true,
     },
   },
   components: {

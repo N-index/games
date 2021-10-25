@@ -92,6 +92,7 @@ export default defineComponent({
       dateZhCN,
       isDarkTheme: JSON.parse(localStorage.getItem("isDarkTheme")),
       collapsed: false,
+      user: null,
     };
   },
   components: {

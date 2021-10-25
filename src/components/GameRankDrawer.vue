@@ -10,10 +10,10 @@
         <n-skeleton text :repeat="3" v-if="ratesLoading" />
         <template v-else>
           <n-data-table
-            :max-height="400"
+            :max-height="600"
             :remote="true"
             :columns="columns"
-            :data="ratesData"
+            :data="rankData"
             :pagination="false"
             :summary="summary"
           />
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { getScore } from "../firebase/access";
+import { getScore, getUser } from "../firebase/access";
 import { h, reactive, ref } from "vue";
 import {
   NTime,
@@ -34,6 +34,7 @@ import {
   NScrollbar,
   NDataTable,
   NSkeleton,
+  NAvatar,
 } from "naive-ui";
 const createColumns = () => {
   return [
@@ -44,8 +45,28 @@ const createColumns = () => {
     },
     {
       title: "用户",
-      key: "user_id",
+      key: "user",
       align: "center",
+      render(row) {
+        if (row.user.photoURL) {
+          return h(NAvatar, {
+            round: true,
+            size: "medium",
+            src: row.user.photoURL,
+            title: row.user.displayName,
+          });
+        } else {
+          return h(
+            NAvatar,
+            {
+              round: true,
+              size: "medium",
+              title: row.user.displayName,
+            },
+            row.user.displayName || "无名"
+          );
+        }
+      },
     },
     {
       title: "时间",
@@ -97,16 +118,16 @@ export default {
       defaultPageSize: 2,
       showSizePicker: true,
     });
-    const ratesData = ref([]);
-    const summary = (ratesData) => {
+    const rankData = ref([]);
+    const summary = (rankData) => {
       return {
         score: {
           value: `平均分：
           ${
-            ratesData.length > 0
+            rankData.length > 0
               ? (
-                  ratesData.reduce((acc, cur) => acc + cur.score, 0) /
-                  ratesData.length
+                  rankData.reduce((acc, cur) => acc + cur.score, 0) /
+                  rankData.length
                 ).toFixed(2)
               : 0
           }
@@ -120,19 +141,30 @@ export default {
       loadingBar.start();
       ratesLoading.value = true;
       try {
-        ratesData.value = await getScore(props.gameKey);
+        const records = await getScore(props.gameKey);
+        rankData.value = records;
+        if (records.length) {
+          const userPaths = records.map(({ user }) => user.path);
+          const users = await Promise.all(
+            userPaths.map((userPath) => getUser(userPath))
+          );
+          records.forEach((rate, index) => {
+            records[index].user = users[index];
+          });
+          rankData.value = records;
+        }
+
         loadingBar.finish();
         ratesLoading.value = false;
       } catch (e) {
-        console.log(e.code);
-        console.log(e.message);
+        // console.log(e.code);
+        // console.log(e.message);
         loadingBar.error();
-
         throw e;
       }
     };
     return {
-      ratesData,
+      rankData,
       rowKey(rowData) {
         return rowData.column1;
       },
@@ -143,7 +175,6 @@ export default {
       openDrawer,
     };
   },
-  created() {},
   watch: {
     isRankDrawerOpen(val) {
       if (!val) return;
