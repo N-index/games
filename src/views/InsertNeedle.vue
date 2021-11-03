@@ -5,8 +5,8 @@
       <div
         id="insert-needle-game"
         tabindex="3"
-        @keydown.space.prevent="shoot"
-        @click="shoot"
+        @keydown.space.prevent="preShoot"
+        @click="preShoot"
       >
         <div
           class="circle"
@@ -29,6 +29,9 @@
       </div>
       <game-detail-card :title="gameName" @toggleDrawer="toggleDrawer">
         <template v-slot:introduce>
+          又是一款简单而不简略的游戏，游戏画面简略但玩法新颖。玩家手中有一定数量的针头，必须把所有的针头都插进旋转的球里头。不能够重叠也不能够撞到球上的针，赶紧来挑战吧。
+        </template>
+        <template v-slot:modalIntroduce>
           又是一款简单而不简略的游戏，游戏画面简略但玩法新颖。玩家手中有一定数量的针头，必须把所有的针头都插进旋转的球里头。不能够重叠也不能够撞到球上的针，赶紧来挑战吧。
         </template>
         <template v-slot:playMethod>
@@ -62,10 +65,14 @@
 import { NIcon, NLi, NSpace, NTooltip, NUl, useDialog } from "naive-ui";
 import { HandRightOutline } from "@vicons/ionicons5";
 import GameDetailCard from "./components/GameDetailCard";
-import GameRate from "../components/GameRate";
-import GameRankDrawer from "../components/GameRankDrawer";
+import GameRate from "./components/GameRate";
+import GameRankDrawer from "./components/GameRankDrawer";
 import { addScore } from "../firebase/access";
 import { ref } from "vue";
+import { signInAnony } from "../firebase/auth/anonymousAuth";
+import { getAuth } from "firebase/auth";
+
+const auth = getAuth();
 
 export default {
   setup() {
@@ -140,6 +147,34 @@ export default {
       return {
         transform: `translateX(-50%) rotate(${deg}deg)`,
       };
+    },
+    preShoot() {
+      if (this.isDialogOpen) return;
+      if (!auth.currentUser) {
+        this.isDialogOpen = true;
+        this.dialog.info({
+          title: "是否创建匿名用户？",
+          content:
+            "为方便保存游戏记录，系统建议使用匿名帐户开启游戏。稍后您可将此匿名帐户升级为永久帐户",
+          positiveText: "创建",
+          negativeText: "不了",
+          maskClosable: false,
+          onPositiveClick: () => {
+            return new Promise((resolve) => {
+              signInAnony().then(() => {
+                resolve();
+                this.isDialogOpen = false;
+                this.shoot();
+              });
+            });
+          },
+          onNegativeClick: () => {
+            this.isDialogOpen = false;
+          },
+        });
+      } else {
+        this.shoot();
+      }
     },
     shoot() {
       this.startGame();

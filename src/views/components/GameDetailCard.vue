@@ -1,13 +1,22 @@
 <template>
-  <n-card style="width: 250px" :title="title">
+  <n-card style="width: 250px" :title="title" :bordered="true">
     <n-collapse :default-expanded-names="['2']" accordion>
       <n-collapse-item title="简介" name="1">
         <template #header-extra>
           <n-icon size="20"><InformationCircleOutline /></n-icon>
         </template>
-        <n-ellipsis expand-trigger="click" line-clamp="2" :tooltip="false">
-          <slot name="introduce">此游戏没有简介</slot>
-        </n-ellipsis>
+
+        <div @click="showModal = true" style="cursor: pointer">
+          <n-ellipsis line-clamp="2" :tooltip="false">
+            <slot name="introduce">此游戏没有简介</slot>
+          </n-ellipsis>
+        </div>
+
+        <n-modal v-model:show="showModal">
+          <n-card style="width: 100%; max-width: 350px">
+            <slot name="modalIntroduce">详细简介</slot>
+          </n-card>
+        </n-modal>
       </n-collapse-item>
 
       <n-collapse-item title="玩法" name="2">
@@ -33,6 +42,7 @@
 
 <script>
 import {
+  NModal,
   NCard,
   NCollapseItem,
   NCollapse,
@@ -49,6 +59,11 @@ import {
 } from "@vicons/ionicons5";
 
 export default {
+  data() {
+    return {
+      showModal: false,
+    };
+  },
   props: {
     title: {
       type: String,
@@ -56,6 +71,7 @@ export default {
     },
   },
   components: {
+    NModal,
     NCard,
     NCollapseItem,
     NCollapse,

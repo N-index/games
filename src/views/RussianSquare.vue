@@ -6,10 +6,10 @@
         id="russian-square"
         ref="russian-square"
         tabindex="1"
-        @keydown.space="transform"
-        @keydown.down="down"
-        @keydown.left="left"
-        @keydown.right="right"
+        @keydown.space.prevent="transform"
+        @keydown.down.prevent="down"
+        @keydown.left.prevent="left"
+        @keydown.right.prevent="right"
       >
         <section class="section">
           <main class="main">
@@ -49,7 +49,7 @@
             <div class="score">分数：{{ score }}</div>
 
             <div class="btn-group">
-              <n-button type="primary" round dashed @click="startGame">
+              <n-button type="primary" round dashed @click="preStart">
                 {{ isStart ? "重新开始" : "开始" }}
               </n-button>
             </div>
@@ -58,6 +58,9 @@
       </div>
       <game-detail-card :title="gameName" @toggleDrawer="toggleDrawer">
         <template v-slot:introduce>
+          《俄罗斯方块》（俄语：Тетрис，英语：Tetris），是1980年末期至1990年代初期风靡全世界的电脑游戏，是落下型益智游戏的始祖，为苏联首个在美国发布的娱乐软件。此游戏最初由阿列克谢·帕基特诺夫在苏联设计和编写，于1984年6月6日首次发布，当时他正在苏联科学院电算中心工作。此游戏的名称是由希腊语数字四的前缀“tetra-”（因所有落下方块皆由四块组成）和帕基特诺夫最喜欢的运动网球（“tennis”）拼接而成。
+        </template>
+        <template v-slot:modalIntroduce>
           《俄罗斯方块》（俄语：Тетрис，英语：Tetris），是1980年末期至1990年代初期风靡全世界的电脑游戏，是落下型益智游戏的始祖，为苏联首个在美国发布的娱乐软件。此游戏最初由阿列克谢·帕基特诺夫在苏联设计和编写，于1984年6月6日首次发布，当时他正在苏联科学院电算中心工作。此游戏的名称是由希腊语数字四的前缀“tetra-”（因所有落下方块皆由四块组成）和帕基特诺夫最喜欢的运动网球（“tennis”）拼接而成。
         </template>
         <template v-slot:playMethod>
@@ -127,8 +130,8 @@
 </template>
 
 <script>
-import GameRankDrawer from "../components/GameRankDrawer";
-import GameRate from "../components/GameRate";
+import GameRankDrawer from "./components/GameRankDrawer";
+import GameRate from "./components/GameRate";
 import {
   NButton,
   NIcon,
@@ -149,6 +152,9 @@ import {
 import { shapes } from "../utils/squareShapes";
 import { ref } from "vue";
 import { addScore } from "../firebase/access";
+import { signInAnony } from "../firebase/auth/anonymousAuth";
+import { getAuth } from "firebase/auth";
+const auth = getAuth();
 
 export default {
   setup() {
@@ -241,6 +247,34 @@ export default {
       this.generateNextShape();
       this.isEnd = false;
     },
+    preStart() {
+      if (this.isDialogOpen) return;
+      if (!auth.currentUser) {
+        this.isDialogOpen = true;
+        this.dialog.info({
+          title: "是否创建匿名用户？",
+          content:
+            "为方便保存游戏记录，系统建议使用匿名帐户开启游戏。稍后您可将此匿名帐户升级为永久帐户",
+          positiveText: "创建",
+          negativeText: "不了",
+          maskClosable: false,
+          onPositiveClick: () => {
+            return new Promise((resolve) => {
+              signInAnony().then(() => {
+                resolve();
+                this.isDialogOpen = false;
+                this.startGame();
+              });
+            });
+          },
+          onNegativeClick: () => {
+            this.isDialogOpen = false;
+          },
+        });
+      } else {
+        this.startGame();
+      }
+    },
     startGame() {
       this.reset();
       this.isStart = true;
@@ -280,6 +314,8 @@ export default {
       this.nextShape = nextShape;
     },
     transform() {
+      if (this.isEnd) return;
+
       const after = [];
       for (const [posX, posY] of this.shapePos) {
         const [offsetX, offsetY] = [
@@ -299,6 +335,7 @@ export default {
       this.shapePos = after;
     },
     left() {
+      if (this.isEnd) return;
       if (
         this.shapePos.some(([x, y]) => y <= 0 || this.squares[x][y - 1] === 1)
       )
@@ -307,6 +344,8 @@ export default {
       this.origin[1] -= 1;
     },
     right() {
+      if (this.isEnd) return;
+
       if (
         this.shapePos.some(
           ([x, y]) => y >= this.length - 1 || this.squares[x][y + 1] === 1
@@ -332,6 +371,8 @@ export default {
       this.squares = [...emptyRow, ...restRows];
     },
     down() {
+      if (this.isEnd) return;
+
       if (this.checkMeet()) {
         this.shapePos.forEach(([x, y]) => {
           this.squares[x][y] = 1;

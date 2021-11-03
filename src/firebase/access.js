@@ -6,6 +6,7 @@ import {
   getDocs,
   query,
   orderBy,
+  where,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "./db";
@@ -49,8 +50,13 @@ async function getScore(gameKey) {
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => doc.data());
 }
-export { addRate, addScore, getScore, getUser };
 
-// 获取 collection 的所有数据
-// const ratesDocs = await getDocs(rateCollections);
-// return ratesDocs.docs.map(doc => doc.data());
+async function getScoreOfUser(gameKey) {
+  const col = collection(db, `scores/${gameKey}/records`);
+  const currentUser = getAuth().currentUser;
+  const userRef = doc(db, "users", currentUser.uid);
+  const q = query(col, where("user", "==", userRef));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => doc.data());
+}
+export { addRate, addScore, getScore, getUser, getScoreOfUser };

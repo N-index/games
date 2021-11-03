@@ -1,22 +1,35 @@
 <template>
-  <n-space v-if="user.photoURL" justify="center" align="center" vertical>
-    <n-avatar round :size="80" :src="user.photoURL" />
+  <n-space
+    v-if="user.photoURL || user.providerData[0]?.photoURL"
+    justify="center"
+    align="center"
+    vertical
+  >
+    <n-avatar round :size="80" :src="user.providerData[0]?.photoURL" />
     <n-gradient-text
       type="primary"
-      v-if="user.displayName || user.providerData.displayName"
+      v-if="user.displayName || user.providerData[0].displayName"
       size="22"
       style="font-weight: 900"
     >
-      {{ user.displayName || user.providerData.displayName }}
+      {{ user.displayName || user.providerData?.displayName }}
     </n-gradient-text>
   </n-space>
 
+  <n-space justify="center">ID: {{ user.uid }}</n-space>
+  <n-space v-if="user.isAnonymous" justify="center">是匿名用户噢</n-space>
+  <template v-for="item of user.providerData" :key="item.providerId">
+    <n-space v-if="user.providerData" justify="center">
+      {{ item.providerId }}: {{ item.displayName }}
+    </n-space>
+  </template>
+
   <n-divider v-if="user.photoURL">详情</n-divider>
   <n-ul style="list-style: none">
-    <n-li v-if="user.email || user.providerData.email">
+    <n-li v-if="user.email || user.providerData?.email">
       <n-space align="center">
         <n-icon size="25"><Mail /> </n-icon>
-        {{ user.email || user.providerData.email }}
+        {{ user.email || user.providerData?.email }}
         <n-icon v-if="user.emailVerified" :color="checkedColor">
           <ShieldCheckmark />
         </n-icon>

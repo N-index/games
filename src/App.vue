@@ -38,12 +38,14 @@
           </n-space>
 
           <n-space justify="center">
-            <n-message-provider>
-              <login-modal></login-modal>
-            </n-message-provider>
+            <n-notification-provider>
+              <n-message-provider>
+                <login-modal></login-modal>
+              </n-message-provider>
+            </n-notification-provider>
           </n-space>
         </n-layout-sider>
-        <n-layout position="static" style="" :native-scrollbar="false">
+        <n-layout position="static" :native-scrollbar="false">
           <n-space
             style="width: 100%; min-height: calc(100vh - var(--header-height))"
             justify="center"
@@ -67,11 +69,12 @@
 import { defineComponent } from "vue";
 import AppHeader from "./components/AppHeader";
 import AppMenu from "./components/AppMenu";
-import LoginModal from "./components/LoginModal";
+import LoginModal from "./components/LoginModal/LoginModal";
 import {
   NIcon,
   NSwitch,
   NDialogProvider,
+  NNotificationProvider,
   NLayout,
   NLayoutHeader,
   NLayoutSider,
@@ -92,11 +95,11 @@ export default defineComponent({
       dateZhCN,
       isDarkTheme: JSON.parse(localStorage.getItem("isDarkTheme")),
       collapsed: false,
-      user: null,
     };
   },
   components: {
     LoginModal,
+    NNotificationProvider,
     NDialogProvider,
     NConfigProvider,
     NMessageProvider,

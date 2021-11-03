@@ -11,7 +11,7 @@ export class User {
     this.photoURL = user.photoURL;
     // 外层的 providerId 跟 providerData 内部的 providerId 是不一样的。外层基本都是 firebase，而内层才是正确的。
     this.providerId = user.providerId;
-    this.providerData = user.providerData[0];
+    this.providerData = user.providerData;
     // 包含登录、注册时间的信息
     const metadata = user.metadata.toJSON();
     this.createdAt = metadata.createdAt;

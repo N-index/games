@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { addRate } from "../firebase/access";
+import { addRate } from "../../firebase/access";
 import { NRate, useMessage, NAlert } from "naive-ui";
 import { ref } from "vue";
 

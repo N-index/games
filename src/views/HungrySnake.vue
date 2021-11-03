@@ -13,6 +13,16 @@
         @keydown.left.prevent="turnLeft"
         @keydown.right.prevent="turnRight"
       >
+        <div class="snake__score" v-show="isEnd">
+          <template v-if="time <= 0"> 任意方向键开始 </template>
+          <template v-else>
+            <span style="font-size: 20px">
+              游戏结束： 您的得分是 {{ score }}
+            </span>
+            <br />
+            任意方向键重新开始...
+          </template>
+        </div>
         <div
           style="
             display: flex;
@@ -44,6 +54,9 @@
       <n-space vertical>
         <game-detail-card :title="gameName" @toggleDrawer="toggleDrawer">
           <template v-slot:introduce>
+            贪吃蛇（Snake）是一个起源於1976年的街机游戏 Blockade。<br />在游戏中，玩家操控一条细长的直线（称为蛇），它会不停前进，玩家只能操控蛇的头部朝向（上下左右），一路吃掉食物，并要避免触碰到自身或者其他障碍物。<br />每次貪食蛇吃掉一件食物，它的身体便增长一些。吃掉一些食物后會使蛇的移動速度逐漸加快，让游戏的难度渐渐变大。
+          </template>
+          <template v-slot:modalIntroduce>
             贪吃蛇（Snake）是一个起源於1976年的街机游戏 Blockade。<br />在游戏中，玩家操控一条细长的直线（称为蛇），它会不停前进，玩家只能操控蛇的头部朝向（上下左右），一路吃掉食物，并要避免触碰到自身或者其他障碍物。<br />每次貪食蛇吃掉一件食物，它的身体便增长一些。吃掉一些食物后會使蛇的移動速度逐漸加快，让游戏的难度渐渐变大。
           </template>
           <template v-slot:playMethod>
@@ -133,13 +146,16 @@ import {
   TimerOutline,
 } from "@vicons/ionicons5";
 import GameDetailCard from "./components/GameDetailCard";
-import GameRankDrawer from "../components/GameRankDrawer";
-import GameRate from "../components/GameRate";
+import GameRankDrawer from "./components/GameRankDrawer";
+import GameRate from "./components/GameRate";
 import { ref } from "vue";
 import { addScore } from "../firebase/access";
-
+import { signInAnony } from "../firebase/auth/anonymousAuth";
+import { getAuth } from "firebase/auth";
+const auth = getAuth();
 export default {
   name: "HungrySnake",
+  props: ["user"],
   setup() {
     const dialog = useDialog();
     const isRankDrawerOpen = ref(false);
@@ -166,6 +182,7 @@ export default {
           positiveText: "离开",
           negativeText: "留下",
           onPositiveClick: () => {
+            this.resetGame();
             resolve(true);
           },
           onNegativeClick: () => {
@@ -202,6 +219,7 @@ export default {
       directions: ["up", "down", "left", "right"],
       currentDirection: "right",
       isStart: false,
+      isEnd: true,
       moveTimer: null,
       improveSpeedTimer: null,
       improveSpeedInterval: 15000,
@@ -216,9 +234,13 @@ export default {
         Math.floor(Math.random() * 20 + 1),
       ],
       speed: 800,
+      isDialogOpen: false,
     };
   },
   computed: {
+    score() {
+      return this.time + this.snakeLength * 100;
+    },
     headPos() {
       return this.snakeBody[0];
     },
@@ -227,24 +249,69 @@ export default {
     },
   },
   methods: {
+    preStartGame() {
+      if (this.isDialogOpen) return;
+      if (!auth.currentUser) {
+        this.isDialogOpen = true;
+        this.dialog.info({
+          title: "是否创建匿名用户？",
+          content:
+            "为方便保存游戏记录，系统建议使用匿名帐户开启游戏。稍后您可将此匿名帐户升级为永久帐户",
+          positiveText: "创建",
+          negativeText: "不了",
+          maskClosable: false,
+          onPositiveClick: () => {
+            return new Promise((resolve) => {
+              signInAnony().then(() => {
+                resolve();
+                this.isDialogOpen = false;
+                this.startGame();
+              });
+            });
+          },
+          onNegativeClick: () => {
+            this.isDialogOpen = false;
+          },
+        });
+      } else {
+        this.startGame();
+      }
+    },
     startGame() {
       if (this.isStart) return;
       this.isStart = true;
+      this.isEnd = false;
+      this.time = 0;
 
       this.setLiveTimer();
       this.setMoveTimer();
       this.setSpeedTimer();
-      setTimeout(() => {
-        this.gameOver();
-      }, 10000);
     },
-    gameOver() {
+    resetGame() {
       this.isStart = false;
-      this.time = 0;
+      this.isEnd = true;
+      this.snakeBody = [
+        [
+          Math.floor(Math.random() * 20 + 1),
+          Math.floor(Math.random() * 20 + 1),
+        ],
+      ];
+      this.food = [
+        Math.floor(Math.random() * 20 + 1),
+        Math.floor(Math.random() * 20 + 1),
+      ];
+      this.speed = 800;
+
       clearInterval(this.liveTimer);
       clearInterval(this.improveSpeedTimer);
-      clearInterval(this.moveTimer);
-      addScore(this.gameKey, Math.floor(Math.random() * 100));
+      (() => {
+        clearTimeout(this.moveTimer);
+        console.log("游戏结束，清除自动步进");
+      })();
+    },
+    gameOver() {
+      addScore(this.gameKey, this.score);
+      this.resetGame();
     },
     setLiveTimer() {
       clearInterval(this.liveTimer);
@@ -260,15 +327,17 @@ export default {
       }, this.improveSpeedInterval);
     },
     setMoveTimer() {
-      clearInterval(this.moveTimer);
+      clearTimeout(this.moveTimer);
+      if (!this.isStart || this.isEnd) return;
       this.moveTimer = setTimeout(() => {
+        console.log("设置下一个movetimer");
         this.move();
         this.setMoveTimer();
       }, this.speed);
     },
     pauseGame() {
       if (this.isStart) {
-        clearInterval(this.moveTimer);
+        clearTimeout(this.moveTimer);
         clearInterval(this.liveTimer);
         clearInterval(this.improveSpeedTimer);
         this.isStart = false;
@@ -302,6 +371,7 @@ export default {
       }
     },
     move() {
+      console.log("进入到move里面");
       let front;
       switch (this.currentDirection) {
         case "up": {
@@ -333,33 +403,42 @@ export default {
           break;
         }
       }
-      this.snakeBody.pop();
-      this.snakeBody.unshift(front);
-      this.eatFood();
+      if (
+        this.snakeBody.find(
+          (body) => body[0] === front[0] && body[1] === front[1]
+        )
+      ) {
+        console.log("gameover!");
+        this.gameOver();
+      } else {
+        this.snakeBody.pop();
+        this.snakeBody.unshift(front);
+        this.eatFood();
+      }
     },
     async turnUp() {
       if (this.isStart && ["up", "down"].includes(this.currentDirection))
         return;
       this.currentDirection = "up";
-      this.startGame();
+      this.preStartGame();
     },
     async turnDown() {
       if (this.isStart && ["up", "down"].includes(this.currentDirection))
         return;
       this.currentDirection = "down";
-      this.startGame();
+      this.preStartGame();
     },
     async turnLeft() {
       if (this.isStart && ["left", "right"].includes(this.currentDirection))
         return;
       this.currentDirection = "left";
-      this.startGame();
+      this.preStartGame();
     },
     async turnRight() {
       if (this.isStart && ["left", "right"].includes(this.currentDirection))
         return;
       this.currentDirection = "right";
-      this.startGame();
+      this.preStartGame();
     },
   },
 };
@@ -400,5 +479,16 @@ export default {
 
 .snake-head {
   background-color: black;
+}
+.snake__score {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(2px);
+  background-color: rgba(200, 200, 200, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>

@@ -10,9 +10,10 @@
         <n-skeleton text :repeat="3" v-if="ratesLoading" />
         <template v-else>
           <n-data-table
-            :max-height="600"
+            :max-height="450"
             :remote="true"
             :columns="columns"
+            :row-class-name="rowClassName"
             :data="rankData"
             :pagination="false"
             :summary="summary"
@@ -24,7 +25,7 @@
 </template>
 
 <script>
-import { getScore, getUser } from "../firebase/access";
+import { getScore, getUser } from "../../firebase/access";
 import { h, reactive, ref } from "vue";
 import {
   NTime,
@@ -36,6 +37,7 @@ import {
   NSkeleton,
   NAvatar,
 } from "naive-ui";
+import { getAuth } from "firebase/auth";
 const createColumns = () => {
   return [
     {
@@ -168,6 +170,15 @@ export default {
       rowKey(rowData) {
         return rowData.column1;
       },
+      rowClassName(rowData) {
+        if (
+          getAuth().currentUser &&
+          rowData?.user?.uid === getAuth().currentUser.uid
+        ) {
+          return "himself";
+        }
+        return null;
+      },
       summary,
       ratesLoading,
       pagination,
@@ -183,5 +194,9 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>
+<style scoped>
+::v-deep(.himself td) {
+  color: white !important;
+  background-color: #0bb8a2 !important;
+}
+</style>
