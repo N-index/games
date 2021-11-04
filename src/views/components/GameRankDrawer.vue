@@ -2,11 +2,12 @@
   <n-drawer
     :show="isRankDrawerOpen"
     @update:show="this.$emit('toggleDrawer')"
-    :width="450"
+    :width="'100%'"
+    style="max-width: 450px"
     placement="right"
   >
     <n-scrollbar>
-      <n-drawer-content :title="gameName + '——排行榜'">
+      <n-drawer-content :title="gameName + '——排行榜'" closable>
         <n-skeleton text :repeat="3" v-if="ratesLoading" />
         <template v-else>
           <n-data-table

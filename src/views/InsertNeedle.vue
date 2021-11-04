@@ -111,6 +111,7 @@ export default {
           title: "是否离开",
           content: `"${this.gameName}" 正在运行，是否离开？`,
           maskClosable: false,
+          closable: false,
           positiveText: "离开",
           negativeText: "留下",
           onPositiveClick: () => {
@@ -159,6 +160,7 @@ export default {
           positiveText: "创建",
           negativeText: "不了",
           maskClosable: false,
+          closable: false,
           onPositiveClick: () => {
             return new Promise((resolve) => {
               signInAnony().then(() => {

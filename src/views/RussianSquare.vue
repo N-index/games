@@ -258,6 +258,7 @@ export default {
           positiveText: "创建",
           negativeText: "不了",
           maskClosable: false,
+          closable: false,
           onPositiveClick: () => {
             return new Promise((resolve) => {
               signInAnony().then(() => {
@@ -269,6 +270,7 @@ export default {
           },
           onNegativeClick: () => {
             this.isDialogOpen = false;
+            console.log("点击了拒绝按钮");
           },
         });
       } else {
