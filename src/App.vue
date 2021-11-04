@@ -131,6 +131,13 @@ export default defineComponent({
       if (JSON.parse(localStorage.getItem("colFlag"))) return;
       this.collapsed = matches;
     };
+    const isMobile = window.matchMedia("(max-width):650px");
+    if (isMobile.matches) {
+      this.collapsed = true;
+    }
+    isMobile.onchange = ({ matches }) => {
+      if (matches) this.collapsed = true;
+    };
   },
   methods: {
     manuallyCol(val) {
