@@ -1,12 +1,12 @@
 
 # Games
-Naive-ui, vicons
+UI: Naive-ui, vicons
 
-Vue.js, Vue-Router
+Frontend: Vue.js, Vue-Router
 
-Firebase
+Backend: Firebase (firebase authentication, firebase store)
 
-eslint-plugin-prettier
+Code lint: eslint-plugin-prettier
 
 ## Static site deployed
 1. https://games-n-index.vercel.app/
